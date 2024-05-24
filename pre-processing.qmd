@@ -1,0 +1,58 @@
+---
+title: "CSC3107 - Information Visualisation Project"
+subtitle: "Data Preparation by P1 Orchid"
+format: html
+Authors:
+  - Jeffrey Yap Wan Lin
+  - Liew Jun Wei
+  - Poon Xiang Yuan
+  - Ryan Ong Zhi Yong
+  - Wong Yuxuan
+  - Zaw Wana
+---
+
+# Data Preparation 
+
+## Load Libraries
+
+```{r}
+#| label: load-libraries
+#| message: false
+
+library(readxl)
+library(dplyr)
+```
+
+## Load Dataset
+
+```{r}
+#| label: load-dataset
+#| message: false
+
+current_us <- read_excel(
+  "SIPRI-Milex-data-2018-2023.xlsx",
+  sheet = "Current US$",
+  skip = 5)
+
+share_gdp <- read_excel(
+  "SIPRI-Milex-data-2018-2023.xlsx",
+  sheet = "Share of GDP",
+  skip = 5)
+```
+
+```{r}
+current_us
+share_gdp
+```
+
+## Data Cleaning
+
+```{r}
+#| label: data-cleaning
+
+# Drop rows that the first column is NA
+current_us <- current_us |> 
+  filter(!is.na(`Country`))
+
+current_us
+```
