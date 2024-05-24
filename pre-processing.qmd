@@ -54,5 +54,10 @@ share_gdp
 current_us <- current_us |> 
   filter(!is.na(`Country`))
 
+# Drop Notes Column
+current_us <- current_us |> 
+  select(-Notes)
+  
+
 current_us
 ```
