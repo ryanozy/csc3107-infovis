@@ -2,7 +2,7 @@
 title: "CSC3107 - Information Visualisation Project"
 subtitle: "Data Preparation by P1 Orchid"
 format: html
-Authors:
+authors:
   - Jeffrey Yap Wan Lin
   - Liew Jun Wei
   - Poon Xiang Yuan
@@ -11,7 +11,7 @@ Authors:
   - Zaw Wana
 ---
 
-# Data Preparation 
+# Data Preparation
 
 ## Load Libraries
 
@@ -21,6 +21,9 @@ Authors:
 
 library(readxl)
 library(dplyr)
+library(gt)
+library(ggplot2)
+library(tidyverse)
 ```
 
 ## Load Dataset
@@ -57,7 +60,61 @@ current_us <- current_us |>
 # Drop Notes Column
 current_us <- current_us |> 
   select(-Notes)
-  
+
+# Change column names from '2018.0' to '2018'
+current_us <- current_us |> 
+  rename_with(~sub("\\.0$", "", .))
+
+# Drop rows that the second column is NA
+current_us <- current_us |> 
+  filter(!is.na(`2018`))
+
+# Mutate '...' values to empty
+current_us <- current_us |> 
+  mutate(across(everything(), ~replace(., . == "...", NA)))
+
+# Convert all columns to numeric
+current_us <- current_us |> 
+  mutate(across(-Country, as.numeric))
+
+# Retain Top 10 Countries in 2023
+current_us <- current_us |> 
+  slice_max(`2023`, n = 10)
 
 current_us
 ```
+
+## Bar Chart
+
+```{r}
+#| label: bar-chart
+
+# Restructure Data for Bar Chart
+top10_long <- current_us |> 
+  select(Country, `2022`, `2023`) |>
+  pivot_longer(cols = `2022`:`2023`, names_to = "Year", values_to = "Spending")
+
+# Create a new dataframe column to show increase in spending from 2022 to 2023
+top10_inc <- current_us |> 
+  mutate(Increase = `2023` - `2022`) |> 
+  select(Country, Increase)
+
+top10_long
+top10_inc
+
+# Grouped Horizontal Bar Chart for Top 10 Countries
+# Sort by 2023 Spending
+bar_plot <- top10_long |>
+  ggplot(aes(x = reorder(Country, Spending), y = Spending, fill = Year)) +
+  geom_col(position = "dodge") +
+  coord_flip() +
+  labs(
+    title = "Top 10 Countries by Military Spending from 2018 to 2023",
+    x = "Country",
+    y = "Military Spending in US$ (Millions)"
+  )
+  
+bar_plot
+```
+
+

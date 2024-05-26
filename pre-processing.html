@@ -87,6 +87,17 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 
 <div class="quarto-title-meta">
 
+    <div>
+    <div class="quarto-title-meta-heading">Authors</div>
+    <div class="quarto-title-meta-contents">
+             <p>Jeffrey Yap Wan Lin </p>
+             <p>Liew Jun Wei </p>
+             <p>Poon Xiang Yuan </p>
+             <p>Ryan Ong Zhi Yong </p>
+             <p>Wong Yuxuan </p>
+             <p>Zaw Wana </p>
+          </div>
+  </div>
     
   
     
@@ -103,7 +114,10 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <h2 class="anchored" data-anchor-id="load-libraries">Load Libraries</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readxl)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(gt)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyverse)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="load-dataset" class="level2">
@@ -163,22 +177,129 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>current_us <span class="ot">&lt;-</span> current_us <span class="sc">|&gt;</span> </span>
 <span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(<span class="st">`</span><span class="at">Country</span><span class="st">`</span>))</span>
 <span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>current_us</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Drop Notes Column</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>current_us <span class="ot">&lt;-</span> current_us <span class="sc">|&gt;</span> </span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="sc">-</span>Notes)</span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Change column names from '2018.0' to '2018'</span></span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>current_us <span class="ot">&lt;-</span> current_us <span class="sc">|&gt;</span> </span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename_with</span>(<span class="sc">~</span><span class="fu">sub</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">.0$"</span>, <span class="st">""</span>, .))</span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-13"><a href="#cb7-13" aria-hidden="true" tabindex="-1"></a><span class="co"># Drop rows that the second column is NA</span></span>
+<span id="cb7-14"><a href="#cb7-14" aria-hidden="true" tabindex="-1"></a>current_us <span class="ot">&lt;-</span> current_us <span class="sc">|&gt;</span> </span>
+<span id="cb7-15"><a href="#cb7-15" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(<span class="st">`</span><span class="at">2018</span><span class="st">`</span>))</span>
+<span id="cb7-16"><a href="#cb7-16" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-17"><a href="#cb7-17" aria-hidden="true" tabindex="-1"></a><span class="co"># Mutate '...' values to empty</span></span>
+<span id="cb7-18"><a href="#cb7-18" aria-hidden="true" tabindex="-1"></a>current_us <span class="ot">&lt;-</span> current_us <span class="sc">|&gt;</span> </span>
+<span id="cb7-19"><a href="#cb7-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">everything</span>(), <span class="sc">~</span><span class="fu">replace</span>(., . <span class="sc">==</span> <span class="st">"..."</span>, <span class="cn">NA</span>)))</span>
+<span id="cb7-20"><a href="#cb7-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb7-21"><a href="#cb7-21" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert all columns to numeric</span></span>
+<span id="cb7-22"><a href="#cb7-22" aria-hidden="true" tabindex="-1"></a>current_us <span class="ot">&lt;-</span> current_us <span class="sc">|&gt;</span> </span>
+<span id="cb7-23"><a href="#cb7-23" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="sc">-</span>Country, as.numeric))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stderr">
+<pre><code>Warning: There were 6 warnings in `mutate()`.
+The first warning was:
+ℹ In argument: `across(-Country, as.numeric)`.
+Caused by warning:
+! NAs introduced by coercion
+ℹ Run `dplyr::last_dplyr_warnings()` to see the 5 remaining warnings.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb9"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb9-1"><a href="#cb9-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Retain Top 10 Countries in 2023</span></span>
+<span id="cb9-2"><a href="#cb9-2" aria-hidden="true" tabindex="-1"></a>current_us <span class="ot">&lt;-</span> current_us <span class="sc">|&gt;</span> </span>
+<span id="cb9-3"><a href="#cb9-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">slice_max</span>(<span class="st">`</span><span class="at">2023</span><span class="st">`</span>, <span class="at">n =</span> <span class="dv">10</span>)</span>
+<span id="cb9-4"><a href="#cb9-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb9-5"><a href="#cb9-5" aria-hidden="true" tabindex="-1"></a>current_us</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 192 × 8
-   Country           Notes `2018.0` `2019.0` `2020.0` `2021.0` `2022.0` `2023.0`
-   &lt;chr&gt;             &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt;   
- 1 Africa            &lt;NA&gt;  &lt;NA&gt;     &lt;NA&gt;     &lt;NA&gt;     &lt;NA&gt;     &lt;NA&gt;     &lt;NA&gt;    
- 2 North Africa      &lt;NA&gt;  &lt;NA&gt;     &lt;NA&gt;     &lt;NA&gt;     &lt;NA&gt;     &lt;NA&gt;     &lt;NA&gt;    
- 3 Algeria           §4    9583.72… 10303.6… 9708.27… 9112.46… 9145.81… 18263.9…
- 4 Libya             ‡§¶16 ...      ...      ...      ...      ...      ...     
- 5 Morocco           §17   3696.85… 3721.32… 4830.95… 5378.36… 4995.02… 5184.92…
- 6 Tunisia           &lt;NA&gt;  844.227… 1000.92… 1157.37… 1250.45… 1156.18… 1208.20…
- 7 sub-Saharan Afri… &lt;NA&gt;  &lt;NA&gt;     &lt;NA&gt;     &lt;NA&gt;     &lt;NA&gt;     &lt;NA&gt;     &lt;NA&gt;    
- 8 Angola            §‖1   1983.61… 1470.93… 993.594… 981.451… 1622.76… 1270.15…
- 9 Benin             §     90.2124… 68.1123… 71.8178… 97.4244… 110.010… 140.776…
-10 Botswana          &lt;NA&gt;  498.087… 514.720… 499.027… 536.630… 485.102… 511.929…
-# ℹ 182 more rows</code></pre>
+<pre><code># A tibble: 10 × 7
+   Country                   `2018`  `2019`  `2020`  `2021`  `2022`  `2023`
+   &lt;chr&gt;                      &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;   &lt;dbl&gt;
+ 1 United States of America 682491. 734344. 778397. 806230. 860692. 916015.
+ 2 China                    232531. 240333. 257973. 285931. 291958. 296439.
+ 3 Russia                    61609.  65201.  61713.  65908. 102367. 109454.
+ 4 India                     66258.  71469.  72937.  76349.  79977.  83575.
+ 5 Saudi Arabia              74612.  65363.  64558.  63195.  70920   75813.
+ 6 United Kingdom            55833.  56568.  58332.  65136.  64082.  74943.
+ 7 Germany                   46498.  49079.  53319.  56513.  56153.  66827.
+ 8 Ukraine                    4750.   6262.   6839.   6898.  41184.  64753.
+ 9 France                    51410.  50119.  52747.  56647.  53639.  61301.
+10 Japan                     48536.  50778.  51397.  50957.  46880.  50161.</code></pre>
+</div>
+</div>
+</section>
+<section id="bar-chart" class="level2">
+<h2 class="anchored" data-anchor-id="bar-chart">Bar Chart</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Restructure Data for Bar Chart</span></span>
+<span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>top10_long <span class="ot">&lt;-</span> current_us <span class="sc">|&gt;</span> </span>
+<span id="cb11-3"><a href="#cb11-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Country, <span class="st">`</span><span class="at">2022</span><span class="st">`</span>, <span class="st">`</span><span class="at">2023</span><span class="st">`</span>) <span class="sc">|&gt;</span></span>
+<span id="cb11-4"><a href="#cb11-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="st">`</span><span class="at">2022</span><span class="st">`</span><span class="sc">:</span><span class="st">`</span><span class="at">2023</span><span class="st">`</span>, <span class="at">names_to =</span> <span class="st">"Year"</span>, <span class="at">values_to =</span> <span class="st">"Spending"</span>)</span>
+<span id="cb11-5"><a href="#cb11-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-6"><a href="#cb11-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Create a new dataframe column to show increase in spending from 2022 to 2023</span></span>
+<span id="cb11-7"><a href="#cb11-7" aria-hidden="true" tabindex="-1"></a>top10_inc <span class="ot">&lt;-</span> current_us <span class="sc">|&gt;</span> </span>
+<span id="cb11-8"><a href="#cb11-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Increase =</span> <span class="st">`</span><span class="at">2023</span><span class="st">`</span> <span class="sc">-</span> <span class="st">`</span><span class="at">2022</span><span class="st">`</span>) <span class="sc">|&gt;</span> </span>
+<span id="cb11-9"><a href="#cb11-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Country, Increase)</span>
+<span id="cb11-10"><a href="#cb11-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb11-11"><a href="#cb11-11" aria-hidden="true" tabindex="-1"></a>top10_long</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 20 × 3
+   Country                  Year  Spending
+   &lt;chr&gt;                    &lt;chr&gt;    &lt;dbl&gt;
+ 1 United States of America 2022   860692.
+ 2 United States of America 2023   916015.
+ 3 China                    2022   291958.
+ 4 China                    2023   296439.
+ 5 Russia                   2022   102367.
+ 6 Russia                   2023   109454.
+ 7 India                    2022    79977.
+ 8 India                    2023    83575.
+ 9 Saudi Arabia             2022    70920 
+10 Saudi Arabia             2023    75813.
+11 United Kingdom           2022    64082.
+12 United Kingdom           2023    74943.
+13 Germany                  2022    56153.
+14 Germany                  2023    66827.
+15 Ukraine                  2022    41184.
+16 Ukraine                  2023    64753.
+17 France                   2022    53639.
+18 France                   2023    61301.
+19 Japan                    2022    46880.
+20 Japan                    2023    50161.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a>top10_inc</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 10 × 2
+   Country                  Increase
+   &lt;chr&gt;                       &lt;dbl&gt;
+ 1 United States of America   55322.
+ 2 China                       4480.
+ 3 Russia                      7088.
+ 4 India                       3598.
+ 5 Saudi Arabia                4893.
+ 6 United Kingdom             10861.
+ 7 Germany                    10674.
+ 8 Ukraine                    23569.
+ 9 France                      7663.
+10 Japan                       3281.</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb15"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb15-1"><a href="#cb15-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Grouped Horizontal Bar Chart for Top 10 Countries</span></span>
+<span id="cb15-2"><a href="#cb15-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Sort by 2023 Spending</span></span>
+<span id="cb15-3"><a href="#cb15-3" aria-hidden="true" tabindex="-1"></a>bar_plot <span class="ot">&lt;-</span> top10_long <span class="sc">|&gt;</span></span>
+<span id="cb15-4"><a href="#cb15-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ggplot</span>(<span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">reorder</span>(Country, Spending), <span class="at">y =</span> Spending, <span class="at">fill =</span> Year)) <span class="sc">+</span></span>
+<span id="cb15-5"><a href="#cb15-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_col</span>(<span class="at">position =</span> <span class="st">"dodge"</span>) <span class="sc">+</span></span>
+<span id="cb15-6"><a href="#cb15-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
+<span id="cb15-7"><a href="#cb15-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
+<span id="cb15-8"><a href="#cb15-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span> <span class="st">"Top 10 Countries by Military Spending from 2018 to 2023"</span>,</span>
+<span id="cb15-9"><a href="#cb15-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Country"</span>,</span>
+<span id="cb15-10"><a href="#cb15-10" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Military Spending in US$ (Millions)"</span></span>
+<span id="cb15-11"><a href="#cb15-11" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb15-12"><a href="#cb15-12" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb15-13"><a href="#cb15-13" aria-hidden="true" tabindex="-1"></a>bar_plot</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="pre-processing_files/figure-html/bar-chart-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
 </div>
 </div>
 </section>
