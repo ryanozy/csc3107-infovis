@@ -187,9 +187,9 @@ ggplot(new_table, aes(x = reorder(Country, -Total_GDP))) +
   geom_segment(aes(x = Country, xend = Country, y = 0, yend = Total_GDP), color = "grey") +
   geom_point(aes(y = Total_GDP), color = "blue", size = 4) +
   geom_point(aes(y = Current_US), color = "red", size = 4) +
-  geom_text_repel(aes(y = Total_GDP, label = dollar(Total_GDP / 1e6, suffix = "m")), size = 3, nudge_y = 0.1) +
-  geom_text_repel(aes(y = Current_US, label = dollar(Current_US / 1e6, suffix = "m")), size = 3, nudge_y = -0.1, color = "red") +
-  scale_y_continuous(labels = dollar_format(prefix = "$", suffix = "m", scale = 1e-6)) +
+  geom_text_repel(aes(y = Total_GDP, label = dollar(Total_GDP / 1e6, suffix = "B")), size = 3, nudge_y = 0.1) +
+  geom_text_repel(aes(y = Current_US, label = dollar(Current_US / 1e6, suffix = "B")), size = 3, nudge_y = -0.2, color = "red") +
+  scale_y_continuous(labels = dollar_format(prefix = "$", suffix = "B", scale = 1e-6)) +
   labs(title = "Total GDP and Military Spending by Country in 2022",
        x = "Country", y = "Value (in current US$)") +
   theme_minimal() +
