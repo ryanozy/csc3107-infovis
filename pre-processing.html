@@ -97,91 +97,194 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </header>
 
 
-<section id="data-preparation" class="level1">
-<h1>Data Preparation</h1>
 <section id="load-libraries" class="level2">
 <h2 class="anchored" data-anchor-id="load-libraries">Load Libraries</h2>
 <div class="cell">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readxl)</span>
-<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(dplyr)</span>
+<span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggplot2)</span>
+<span id="cb1-4"><a href="#cb1-4" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(scales)</span>
+<span id="cb1-5"><a href="#cb1-5" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(readxl)</span>
+<span id="cb1-6"><a href="#cb1-6" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(tidyr)</span>
+<span id="cb1-7"><a href="#cb1-7" aria-hidden="true" tabindex="-1"></a><span class="fu">library</span>(ggrepel)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
 <section id="load-dataset" class="level2">
 <h2 class="anchored" data-anchor-id="load-dataset">Load Dataset</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>current_us <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(</span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"SIPRI-Milex-data-2018-2023.xlsx"</span>,</span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">sheet =</span> <span class="st">"Current US$"</span>,</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">skip =</span> <span class="dv">5</span>)</span>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>regional_totals <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(</span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>  <span class="st">"SIPRI-Milex-data-1949-2023.xlsx"</span>,</span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="at">sheet =</span> <span class="st">"Regional totals"</span>,</span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>  <span class="at">skip =</span> <span class="dv">13</span>)</span>
 <span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>share_gdp <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(</span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">"SIPRI-Milex-data-2018-2023.xlsx"</span>,</span>
-<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">sheet =</span> <span class="st">"Share of GDP"</span>,</span>
-<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">skip =</span> <span class="dv">5</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>local_currency_financial_years <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(</span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="st">"SIPRI-Milex-data-1949-2023.xlsx"</span>,</span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>  <span class="at">sheet =</span> <span class="st">"Local currency financial years"</span>,</span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>  <span class="at">skip =</span> <span class="dv">7</span>)</span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>local_currency_calendar_years <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(</span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  <span class="st">"SIPRI-Milex-data-1949-2023.xlsx"</span>,</span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  <span class="at">sheet =</span> <span class="st">"Local currency calendar years"</span>,</span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  <span class="at">skip =</span> <span class="dv">7</span>)</span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-16"><a href="#cb2-16" aria-hidden="true" tabindex="-1"></a>const_currency <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(</span>
+<span id="cb2-17"><a href="#cb2-17" aria-hidden="true" tabindex="-1"></a>  <span class="st">"SIPRI-Milex-data-1949-2023.xlsx"</span>,</span>
+<span id="cb2-18"><a href="#cb2-18" aria-hidden="true" tabindex="-1"></a>  <span class="at">sheet =</span> <span class="st">"Constant (2022) US$"</span>,</span>
+<span id="cb2-19"><a href="#cb2-19" aria-hidden="true" tabindex="-1"></a>  <span class="at">skip =</span> <span class="dv">5</span>)</span>
+<span id="cb2-20"><a href="#cb2-20" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-21"><a href="#cb2-21" aria-hidden="true" tabindex="-1"></a>current_us <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(</span>
+<span id="cb2-22"><a href="#cb2-22" aria-hidden="true" tabindex="-1"></a>  <span class="st">"SIPRI-Milex-data-1949-2023.xlsx"</span>,</span>
+<span id="cb2-23"><a href="#cb2-23" aria-hidden="true" tabindex="-1"></a>  <span class="at">sheet =</span> <span class="st">"Current US$"</span>,</span>
+<span id="cb2-24"><a href="#cb2-24" aria-hidden="true" tabindex="-1"></a>  <span class="at">skip =</span> <span class="dv">5</span>)</span>
+<span id="cb2-25"><a href="#cb2-25" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-26"><a href="#cb2-26" aria-hidden="true" tabindex="-1"></a>share_of_GDP <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(</span>
+<span id="cb2-27"><a href="#cb2-27" aria-hidden="true" tabindex="-1"></a>  <span class="st">"SIPRI-Milex-data-1949-2023.xlsx"</span>,</span>
+<span id="cb2-28"><a href="#cb2-28" aria-hidden="true" tabindex="-1"></a>  <span class="at">sheet =</span> <span class="st">"Share of GDP"</span>,</span>
+<span id="cb2-29"><a href="#cb2-29" aria-hidden="true" tabindex="-1"></a>  <span class="at">skip =</span> <span class="dv">5</span>)</span>
+<span id="cb2-30"><a href="#cb2-30" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-31"><a href="#cb2-31" aria-hidden="true" tabindex="-1"></a>per_capita <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(</span>
+<span id="cb2-32"><a href="#cb2-32" aria-hidden="true" tabindex="-1"></a>  <span class="st">"SIPRI-Milex-data-1949-2023.xlsx"</span>,</span>
+<span id="cb2-33"><a href="#cb2-33" aria-hidden="true" tabindex="-1"></a>  <span class="at">sheet =</span> <span class="st">"Per capita"</span>,</span>
+<span id="cb2-34"><a href="#cb2-34" aria-hidden="true" tabindex="-1"></a>  <span class="at">skip =</span> <span class="dv">6</span>)</span>
+<span id="cb2-35"><a href="#cb2-35" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-36"><a href="#cb2-36" aria-hidden="true" tabindex="-1"></a>share_of_govt_spending <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(</span>
+<span id="cb2-37"><a href="#cb2-37" aria-hidden="true" tabindex="-1"></a>  <span class="st">"SIPRI-Milex-data-1949-2023.xlsx"</span>,</span>
+<span id="cb2-38"><a href="#cb2-38" aria-hidden="true" tabindex="-1"></a>  <span class="at">sheet =</span> <span class="st">"Share of Govt. spending"</span>,</span>
+<span id="cb2-39"><a href="#cb2-39" aria-hidden="true" tabindex="-1"></a>  <span class="at">skip =</span> <span class="dv">7</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
+</section>
+<section id="data-cleaning-for-current-us-dataset" class="level2">
+<h2 class="anchored" data-anchor-id="data-cleaning-for-current-us-dataset">Data Cleaning for Current US Dataset</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>current_us</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 193 × 8
-   Country           Notes `2018.0` `2019.0` `2020.0` `2021.0` `2022.0` `2023.0`
-   &lt;chr&gt;             &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt;   
- 1 &lt;NA&gt;              &lt;NA&gt;  &lt;NA&gt;     &lt;NA&gt;     &lt;NA&gt;     &lt;NA&gt;     &lt;NA&gt;     &lt;NA&gt;    
- 2 Africa            &lt;NA&gt;  &lt;NA&gt;     &lt;NA&gt;     &lt;NA&gt;     &lt;NA&gt;     &lt;NA&gt;     &lt;NA&gt;    
- 3 North Africa      &lt;NA&gt;  &lt;NA&gt;     &lt;NA&gt;     &lt;NA&gt;     &lt;NA&gt;     &lt;NA&gt;     &lt;NA&gt;    
- 4 Algeria           §4    9583.72… 10303.6… 9708.27… 9112.46… 9145.81… 18263.9…
- 5 Libya             ‡§¶16 ...      ...      ...      ...      ...      ...     
- 6 Morocco           §17   3696.85… 3721.32… 4830.95… 5378.36… 4995.02… 5184.92…
- 7 Tunisia           &lt;NA&gt;  844.227… 1000.92… 1157.37… 1250.45… 1156.18… 1208.20…
- 8 sub-Saharan Afri… &lt;NA&gt;  &lt;NA&gt;     &lt;NA&gt;     &lt;NA&gt;     &lt;NA&gt;     &lt;NA&gt;     &lt;NA&gt;    
- 9 Angola            §‖1   1983.61… 1470.93… 993.594… 981.451… 1622.76… 1270.15…
-10 Benin             §     90.2124… 68.1123… 71.8178… 97.4244… 110.010… 140.776…
-# ℹ 183 more rows</code></pre>
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Identify the year columns (1949.0 to 2023.0)</span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>year_columns <span class="ot">&lt;-</span> <span class="fu">as.character</span>(<span class="dv">1949</span><span class="sc">:</span><span class="dv">2023</span>)</span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>year_columns <span class="ot">&lt;-</span> <span class="fu">paste0</span>(year_columns, <span class="st">".0"</span>)</span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert year columns to numeric, handling non-numeric values by coercing them to NA</span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>current_us[year_columns] <span class="ot">&lt;-</span> <span class="fu">lapply</span>(current_us[year_columns], <span class="cf">function</span>(x) <span class="fu">as.numeric</span>(<span class="fu">as.character</span>(<span class="fu">gsub</span>(<span class="st">"[^0-9.-]"</span>, <span class="st">""</span>, x))))</span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert double columns to integer</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>current_us[year_columns] <span class="ot">&lt;-</span> <span class="fu">lapply</span>(current_us[year_columns], <span class="cf">function</span>(x) <span class="fu">as.integer</span>(x))</span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove ".0" suffix from column names</span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(current_us) <span class="ot">&lt;-</span> <span class="fu">sub</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">.0$"</span>, <span class="st">""</span>, <span class="fu">names</span>(current_us))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>share_gdp</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</section>
+<section id="compute-top-ten-spending-countries" class="level2">
+<h2 class="anchored" data-anchor-id="compute-top-ten-spending-countries">Compute Top Ten Spending Countries</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Select the relevant columns (Country and 2023.0)</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a><span class="co"># Sort the data frame by the 2023.0 column in descending order</span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a><span class="co"># Select the top 10 rows</span></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>top_10_countries <span class="ot">&lt;-</span> current_us <span class="sc">|&gt;</span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Country, <span class="st">`</span><span class="at">2022</span><span class="st">`</span>) <span class="sc">|&gt;</span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(<span class="st">`</span><span class="at">2022</span><span class="st">`</span>)) <span class="sc">|&gt;</span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="dv">10</span>)</span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>top_10_countries</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 193 × 8
-   Country           Notes `2018.0` `2019.0` `2020.0` `2021.0` `2022.0` `2023.0`
-   &lt;chr&gt;             &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt;   
- 1 &lt;NA&gt;              &lt;NA&gt;  &lt;NA&gt;     &lt;NA&gt;     &lt;NA&gt;     &lt;NA&gt;     &lt;NA&gt;     &lt;NA&gt;    
- 2 Africa            &lt;NA&gt;  &lt;NA&gt;     &lt;NA&gt;     &lt;NA&gt;     &lt;NA&gt;     &lt;NA&gt;     &lt;NA&gt;    
- 3 North Africa      &lt;NA&gt;  &lt;NA&gt;     &lt;NA&gt;     &lt;NA&gt;     &lt;NA&gt;     &lt;NA&gt;     &lt;NA&gt;    
- 4 Algeria           §4    0.05483… 0.05999… 0.06658… 0.05570… 0.04695… 0.08171…
- 5 Libya             ‡§¶16 ...      ...      ...      ...      ...      ...     
- 6 Morocco           §17   0.02902… 0.02865… 0.03979… 0.03755… 0.03814… 0.03638…
- 7 Tunisia           &lt;NA&gt;  0.01976… 0.02383… 0.02709… 0.02636… 0.02473… 0.02357…
- 8 sub-Saharan Afri… &lt;NA&gt;  &lt;NA&gt;     &lt;NA&gt;     &lt;NA&gt;     &lt;NA&gt;     &lt;NA&gt;     &lt;NA&gt;    
- 9 Angola            §‖1   0.01955… 0.01739… 0.01736… 0.01300… 0.01316… 0.01332…
-10 Benin             §     0.00632… 0.00473… 0.00458… 0.00550… 0.00632… 0.00711…
-# ℹ 183 more rows</code></pre>
+<pre><code># A tibble: 10 × 2
+   Country                  `2022`
+   &lt;chr&gt;                     &lt;int&gt;
+ 1 United States of America 860692
+ 2 China                    291958
+ 3 Russia                   102366
+ 4 India                     79976
+ 5 Saudi Arabia              70920
+ 6 United Kingdom            64081
+ 7 Germany                   56153
+ 8 France                    53638
+ 9 Japan                     46880
+10 Korea, South              46365</code></pre>
 </div>
 </div>
 </section>
-<section id="data-cleaning" class="level2">
-<h2 class="anchored" data-anchor-id="data-cleaning">Data Cleaning</h2>
+<section id="data-cleaning-for-share_of_gdp-dataset" class="level2">
+<h2 class="anchored" data-anchor-id="data-cleaning-for-share_of_gdp-dataset">Data Cleaning for Share_of_GDP Dataset</h2>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Drop rows that the first column is NA</span></span>
-<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>current_us <span class="ot">&lt;-</span> current_us <span class="sc">|&gt;</span> </span>
-<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(<span class="sc">!</span><span class="fu">is.na</span>(<span class="st">`</span><span class="at">Country</span><span class="st">`</span>))</span>
-<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>current_us</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stdout">
-<pre><code># A tibble: 192 × 8
-   Country           Notes `2018.0` `2019.0` `2020.0` `2021.0` `2022.0` `2023.0`
-   &lt;chr&gt;             &lt;chr&gt; &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt;    &lt;chr&gt;   
- 1 Africa            &lt;NA&gt;  &lt;NA&gt;     &lt;NA&gt;     &lt;NA&gt;     &lt;NA&gt;     &lt;NA&gt;     &lt;NA&gt;    
- 2 North Africa      &lt;NA&gt;  &lt;NA&gt;     &lt;NA&gt;     &lt;NA&gt;     &lt;NA&gt;     &lt;NA&gt;     &lt;NA&gt;    
- 3 Algeria           §4    9583.72… 10303.6… 9708.27… 9112.46… 9145.81… 18263.9…
- 4 Libya             ‡§¶16 ...      ...      ...      ...      ...      ...     
- 5 Morocco           §17   3696.85… 3721.32… 4830.95… 5378.36… 4995.02… 5184.92…
- 6 Tunisia           &lt;NA&gt;  844.227… 1000.92… 1157.37… 1250.45… 1156.18… 1208.20…
- 7 sub-Saharan Afri… &lt;NA&gt;  &lt;NA&gt;     &lt;NA&gt;     &lt;NA&gt;     &lt;NA&gt;     &lt;NA&gt;     &lt;NA&gt;    
- 8 Angola            §‖1   1983.61… 1470.93… 993.594… 981.451… 1622.76… 1270.15…
- 9 Benin             §     90.2124… 68.1123… 71.8178… 97.4244… 110.010… 140.776…
-10 Botswana          &lt;NA&gt;  498.087… 514.720… 499.027… 536.630… 485.102… 511.929…
-# ℹ 182 more rows</code></pre>
-</div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Read the Excel file for share of GDP, skipping the first 5 rows</span></span>
+<span id="cb6-2"><a href="#cb6-2" aria-hidden="true" tabindex="-1"></a>share_of_GDP <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(<span class="st">"SIPRI-Milex-data-1949-2023.xlsx"</span>, <span class="at">sheet =</span> <span class="st">"Share of GDP"</span>, <span class="at">skip =</span> <span class="dv">5</span>)</span>
+<span id="cb6-3"><a href="#cb6-3" aria-hidden="true" tabindex="-1"></a>current_us <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(<span class="st">"SIPRI-Milex-data-1949-2023.xlsx"</span>, <span class="at">sheet =</span> <span class="st">"Current US$"</span>, <span class="at">skip =</span> <span class="dv">5</span>)</span>
+<span id="cb6-4"><a href="#cb6-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-5"><a href="#cb6-5" aria-hidden="true" tabindex="-1"></a><span class="co"># Identify the year columns (1949.0 to 2023.0)</span></span>
+<span id="cb6-6"><a href="#cb6-6" aria-hidden="true" tabindex="-1"></a>year_columns <span class="ot">&lt;-</span> <span class="fu">as.character</span>(<span class="dv">1949</span><span class="sc">:</span><span class="dv">2023</span>)</span>
+<span id="cb6-7"><a href="#cb6-7" aria-hidden="true" tabindex="-1"></a>year_columns <span class="ot">&lt;-</span> <span class="fu">paste0</span>(year_columns, <span class="st">".0"</span>)</span>
+<span id="cb6-8"><a href="#cb6-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-9"><a href="#cb6-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert year columns to numeric, handling non-numeric values by coercing them to NA</span></span>
+<span id="cb6-10"><a href="#cb6-10" aria-hidden="true" tabindex="-1"></a><span class="co"># and converting percentage values to their numeric equivalents</span></span>
+<span id="cb6-11"><a href="#cb6-11" aria-hidden="true" tabindex="-1"></a>share_of_GDP[year_columns] <span class="ot">&lt;-</span> <span class="fu">lapply</span>(share_of_GDP[year_columns], <span class="cf">function</span>(x) {</span>
+<span id="cb6-12"><a href="#cb6-12" aria-hidden="true" tabindex="-1"></a>  x <span class="ot">&lt;-</span> <span class="fu">gsub</span>(<span class="st">"%"</span>, <span class="st">""</span>, x)  <span class="co"># Remove the percentage symbol</span></span>
+<span id="cb6-13"><a href="#cb6-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.numeric</span>(<span class="fu">as.character</span>(<span class="fu">gsub</span>(<span class="st">"[^0-9.-]"</span>, <span class="st">""</span>, x)))  <span class="co"># Convert to numeric</span></span>
+<span id="cb6-14"><a href="#cb6-14" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb6-15"><a href="#cb6-15" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-16"><a href="#cb6-16" aria-hidden="true" tabindex="-1"></a>current_us[year_columns] <span class="ot">&lt;-</span> <span class="fu">lapply</span>(current_us[year_columns], <span class="cf">function</span>(x) {</span>
+<span id="cb6-17"><a href="#cb6-17" aria-hidden="true" tabindex="-1"></a>  <span class="fu">as.numeric</span>(<span class="fu">as.character</span>(<span class="fu">gsub</span>(<span class="st">"[^0-9.-]"</span>, <span class="st">""</span>, x)))  <span class="co"># Convert to numeric</span></span>
+<span id="cb6-18"><a href="#cb6-18" aria-hidden="true" tabindex="-1"></a>})</span>
+<span id="cb6-19"><a href="#cb6-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-20"><a href="#cb6-20" aria-hidden="true" tabindex="-1"></a><span class="co"># Remove ".0" suffix from column names</span></span>
+<span id="cb6-21"><a href="#cb6-21" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(share_of_GDP) <span class="ot">&lt;-</span> <span class="fu">sub</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">.0$"</span>, <span class="st">""</span>, <span class="fu">names</span>(share_of_GDP))</span>
+<span id="cb6-22"><a href="#cb6-22" aria-hidden="true" tabindex="-1"></a><span class="fu">names</span>(current_us) <span class="ot">&lt;-</span> <span class="fu">sub</span>(<span class="st">"</span><span class="sc">\\</span><span class="st">.0$"</span>, <span class="st">""</span>, <span class="fu">names</span>(current_us))</span>
+<span id="cb6-23"><a href="#cb6-23" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-24"><a href="#cb6-24" aria-hidden="true" tabindex="-1"></a><span class="co"># Assume top_10_countries is already defined and contains the top 10 countries based on spending in 2023</span></span>
+<span id="cb6-25"><a href="#cb6-25" aria-hidden="true" tabindex="-1"></a>top_10_countries <span class="ot">&lt;-</span> current_us <span class="sc">%&gt;%</span></span>
+<span id="cb6-26"><a href="#cb6-26" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Country, <span class="st">`</span><span class="at">2022</span><span class="st">`</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb6-27"><a href="#cb6-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(<span class="st">`</span><span class="at">2022</span><span class="st">`</span>)) <span class="sc">%&gt;%</span></span>
+<span id="cb6-28"><a href="#cb6-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">head</span>(<span class="dv">10</span>)</span>
+<span id="cb6-29"><a href="#cb6-29" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-30"><a href="#cb6-30" aria-hidden="true" tabindex="-1"></a><span class="co"># Merge share_of_GDP and current_us datasets based on Country column</span></span>
+<span id="cb6-31"><a href="#cb6-31" aria-hidden="true" tabindex="-1"></a>merged_data <span class="ot">&lt;-</span> <span class="fu">merge</span>(share_of_GDP, current_us, <span class="at">by =</span> <span class="st">"Country"</span>)</span>
+<span id="cb6-32"><a href="#cb6-32" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-33"><a href="#cb6-33" aria-hidden="true" tabindex="-1"></a><span class="co"># Select only the rows corresponding to the top 10 countries</span></span>
+<span id="cb6-34"><a href="#cb6-34" aria-hidden="true" tabindex="-1"></a>merged_top_10 <span class="ot">&lt;-</span> merged_data <span class="sc">%&gt;%</span></span>
+<span id="cb6-35"><a href="#cb6-35" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Country <span class="sc">%in%</span> top_10_countries<span class="sc">$</span>Country)</span>
+<span id="cb6-36"><a href="#cb6-36" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-37"><a href="#cb6-37" aria-hidden="true" tabindex="-1"></a><span class="co"># Select relevant columns (Country, 2023 from share_of_GDP, and 2023 from current_us)</span></span>
+<span id="cb6-38"><a href="#cb6-38" aria-hidden="true" tabindex="-1"></a>new_table <span class="ot">&lt;-</span> merged_top_10 <span class="sc">%&gt;%</span></span>
+<span id="cb6-39"><a href="#cb6-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Country, <span class="st">`</span><span class="at">2022.x</span><span class="st">`</span>, <span class="st">`</span><span class="at">2022.y</span><span class="st">`</span>) <span class="sc">%&gt;%</span></span>
+<span id="cb6-40"><a href="#cb6-40" aria-hidden="true" tabindex="-1"></a>  <span class="fu">rename</span>(<span class="at">Share_of_GDP =</span> <span class="st">`</span><span class="at">2022.x</span><span class="st">`</span>, <span class="at">Current_US =</span> <span class="st">`</span><span class="at">2022.y</span><span class="st">`</span>)</span>
+<span id="cb6-41"><a href="#cb6-41" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-42"><a href="#cb6-42" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-43"><a href="#cb6-43" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate total GDP by dividing spending (Current_US) by the share of GDP (Share_of_GDP)</span></span>
+<span id="cb6-44"><a href="#cb6-44" aria-hidden="true" tabindex="-1"></a>new_table <span class="ot">&lt;-</span> new_table <span class="sc">%&gt;%</span></span>
+<span id="cb6-45"><a href="#cb6-45" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Total_GDP =</span> Current_US <span class="sc">/</span> Share_of_GDP)</span>
+<span id="cb6-46"><a href="#cb6-46" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-47"><a href="#cb6-47" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-48"><a href="#cb6-48" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate total GDP by dividing spending (Current_US) by the share of GDP (Share_of_GDP)</span></span>
+<span id="cb6-49"><a href="#cb6-49" aria-hidden="true" tabindex="-1"></a>new_table <span class="ot">&lt;-</span> new_table <span class="sc">%&gt;%</span></span>
+<span id="cb6-50"><a href="#cb6-50" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Total_GDP =</span> Current_US <span class="sc">/</span> Share_of_GDP)</span>
+<span id="cb6-51"><a href="#cb6-51" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-52"><a href="#cb6-52" aria-hidden="true" tabindex="-1"></a><span class="co"># Calculate the remaining GDP which is total GDP minus the military spending</span></span>
+<span id="cb6-53"><a href="#cb6-53" aria-hidden="true" tabindex="-1"></a>new_table <span class="ot">&lt;-</span> new_table <span class="sc">%&gt;%</span></span>
+<span id="cb6-54"><a href="#cb6-54" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="at">Remaining_GDP =</span> Total_GDP <span class="sc">-</span> Current_US)</span>
+<span id="cb6-55"><a href="#cb6-55" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb6-56"><a href="#cb6-56" aria-hidden="true" tabindex="-1"></a><span class="co"># Reshape the data for plotting</span></span>
+<span id="cb6-57"><a href="#cb6-57" aria-hidden="true" tabindex="-1"></a>plot_data <span class="ot">&lt;-</span> new_table <span class="sc">%&gt;%</span></span>
+<span id="cb6-58"><a href="#cb6-58" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="fu">c</span>(Current_US, Remaining_GDP), <span class="at">names_to =</span> <span class="st">"Type"</span>, <span class="at">values_to =</span> <span class="st">"Value"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 </section>
+<section id="plot-lollipop-chart-total-gdp-vs-military-spending" class="level2">
+<h2 class="anchored" data-anchor-id="plot-lollipop-chart-total-gdp-vs-military-spending">Plot Lollipop Chart (Total GDP vs Military Spending)</h2>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Dot plot (Lollipop Chart)</span></span>
+<span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(new_table, <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">reorder</span>(Country, <span class="sc">-</span>Total_GDP))) <span class="sc">+</span></span>
+<span id="cb7-3"><a href="#cb7-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_segment</span>(<span class="fu">aes</span>(<span class="at">x =</span> Country, <span class="at">xend =</span> Country, <span class="at">y =</span> <span class="dv">0</span>, <span class="at">yend =</span> Total_GDP), <span class="at">color =</span> <span class="st">"grey"</span>) <span class="sc">+</span></span>
+<span id="cb7-4"><a href="#cb7-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">y =</span> Total_GDP), <span class="at">color =</span> <span class="st">"blue"</span>, <span class="at">size =</span> <span class="dv">4</span>) <span class="sc">+</span></span>
+<span id="cb7-5"><a href="#cb7-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="fu">aes</span>(<span class="at">y =</span> Current_US), <span class="at">color =</span> <span class="st">"red"</span>, <span class="at">size =</span> <span class="dv">4</span>) <span class="sc">+</span></span>
+<span id="cb7-6"><a href="#cb7-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text_repel</span>(<span class="fu">aes</span>(<span class="at">y =</span> Total_GDP, <span class="at">label =</span> <span class="fu">dollar</span>(Total_GDP <span class="sc">/</span> <span class="fl">1e6</span>, <span class="at">suffix =</span> <span class="st">"m"</span>)), <span class="at">size =</span> <span class="dv">3</span>, <span class="at">nudge_y =</span> <span class="fl">0.1</span>) <span class="sc">+</span></span>
+<span id="cb7-7"><a href="#cb7-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text_repel</span>(<span class="fu">aes</span>(<span class="at">y =</span> Current_US, <span class="at">label =</span> <span class="fu">dollar</span>(Current_US <span class="sc">/</span> <span class="fl">1e6</span>, <span class="at">suffix =</span> <span class="st">"m"</span>)), <span class="at">size =</span> <span class="dv">3</span>, <span class="at">nudge_y =</span> <span class="sc">-</span><span class="fl">0.1</span>, <span class="at">color =</span> <span class="st">"red"</span>) <span class="sc">+</span></span>
+<span id="cb7-8"><a href="#cb7-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_y_continuous</span>(<span class="at">labels =</span> <span class="fu">dollar_format</span>(<span class="at">prefix =</span> <span class="st">"$"</span>, <span class="at">suffix =</span> <span class="st">"m"</span>, <span class="at">scale =</span> <span class="fl">1e-6</span>)) <span class="sc">+</span></span>
+<span id="cb7-9"><a href="#cb7-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Total GDP and Military Spending by Country in 2022"</span>,</span>
+<span id="cb7-10"><a href="#cb7-10" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Country"</span>, <span class="at">y =</span> <span class="st">"Value (in current US$)"</span>) <span class="sc">+</span></span>
+<span id="cb7-11"><a href="#cb7-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
+<span id="cb7-12"><a href="#cb7-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">axis.text.x =</span> <span class="fu">element_text</span>(<span class="at">angle =</span> <span class="dv">45</span>, <span class="at">hjust =</span> <span class="dv">1</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output-display">
+<div>
+<figure class="figure">
+<p><img src="pre-processing_files/figure-html/unnamed-chunk-6-1.png" class="img-fluid figure-img" width="672"></p>
+</figure>
+</div>
+</div>
+</div>
 </section>
 
 </main>

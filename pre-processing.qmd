@@ -11,48 +11,187 @@ Authors:
   - Zaw Wana
 ---
 
-# Data Preparation 
 
 ## Load Libraries
-
 ```{r}
 #| label: load-libraries
 #| message: false
 
 library(readxl)
 library(dplyr)
+library(ggplot2)
+library(scales)
+library(readxl)
+library(tidyr)
+library(ggrepel)
+
 ```
 
 ## Load Dataset
-
 ```{r}
-#| label: load-dataset
+#| label: load dataset
 #| message: false
 
+regional_totals <- read_excel(
+  "SIPRI-Milex-data-1949-2023.xlsx",
+  sheet = "Regional totals",
+  skip = 13)
+
+local_currency_financial_years <- read_excel(
+  "SIPRI-Milex-data-1949-2023.xlsx",
+  sheet = "Local currency financial years",
+  skip = 7)
+
+local_currency_calendar_years <- read_excel(
+  "SIPRI-Milex-data-1949-2023.xlsx",
+  sheet = "Local currency calendar years",
+  skip = 7)
+
+const_currency <- read_excel(
+  "SIPRI-Milex-data-1949-2023.xlsx",
+  sheet = "Constant (2022) US$",
+  skip = 5)
+
 current_us <- read_excel(
-  "SIPRI-Milex-data-2018-2023.xlsx",
+  "SIPRI-Milex-data-1949-2023.xlsx",
   sheet = "Current US$",
   skip = 5)
 
-share_gdp <- read_excel(
-  "SIPRI-Milex-data-2018-2023.xlsx",
+share_of_GDP <- read_excel(
+  "SIPRI-Milex-data-1949-2023.xlsx",
   sheet = "Share of GDP",
   skip = 5)
+
+per_capita <- read_excel(
+  "SIPRI-Milex-data-1949-2023.xlsx",
+  sheet = "Per capita",
+  skip = 6)
+
+share_of_govt_spending <- read_excel(
+  "SIPRI-Milex-data-1949-2023.xlsx",
+  sheet = "Share of Govt. spending",
+  skip = 7)
+
 ```
 
+## Data Cleaning for Current US Dataset
 ```{r}
-current_us
-share_gdp
+#| label: data cleaning for Current US dataset
+#| message: false
+#| warning: false
+
+
+# Identify the year columns (1949.0 to 2023.0)
+year_columns <- as.character(1949:2023)
+year_columns <- paste0(year_columns, ".0")
+
+# Convert year columns to numeric, handling non-numeric values by coercing them to NA
+current_us[year_columns] <- lapply(current_us[year_columns], function(x) as.numeric(as.character(gsub("[^0-9.-]", "", x))))
+
+# Convert double columns to integer
+current_us[year_columns] <- lapply(current_us[year_columns], function(x) as.integer(x))
+
+# Remove ".0" suffix from column names
+names(current_us) <- sub("\\.0$", "", names(current_us))
 ```
 
-## Data Cleaning
+## Compute Top Ten Spending Countries
+```{r}
+#| label: top-ten spending countries
+#| message: false
+#| warning: false
+
+# Select the relevant columns (Country and 2023.0)
+# Sort the data frame by the 2023.0 column in descending order
+# Select the top 10 rows
+top_10_countries <- current_us |>
+  select(Country, `2022`) |>
+  arrange(desc(`2022`)) |>
+  head(10)
+
+top_10_countries
+
+```
+
+## Data Cleaning for Share_of_GDP Dataset
+```{r}
+#| label: data cleaning for GDP dataset
+#| message: false
+#| warning: false
+
+# Read the Excel file for share of GDP, skipping the first 5 rows
+share_of_GDP <- read_excel("SIPRI-Milex-data-1949-2023.xlsx", sheet = "Share of GDP", skip = 5)
+current_us <- read_excel("SIPRI-Milex-data-1949-2023.xlsx", sheet = "Current US$", skip = 5)
+
+# Identify the year columns (1949.0 to 2023.0)
+year_columns <- as.character(1949:2023)
+year_columns <- paste0(year_columns, ".0")
+
+# Convert year columns to numeric, handling non-numeric values by coercing them to NA
+# and converting percentage values to their numeric equivalents
+share_of_GDP[year_columns] <- lapply(share_of_GDP[year_columns], function(x) {
+  x <- gsub("%", "", x)  # Remove the percentage symbol
+  as.numeric(as.character(gsub("[^0-9.-]", "", x)))  # Convert to numeric
+})
+
+current_us[year_columns] <- lapply(current_us[year_columns], function(x) {
+  as.numeric(as.character(gsub("[^0-9.-]", "", x)))  # Convert to numeric
+})
+
+# Remove ".0" suffix from column names
+names(share_of_GDP) <- sub("\\.0$", "", names(share_of_GDP))
+names(current_us) <- sub("\\.0$", "", names(current_us))
+
+# Assume top_10_countries is already defined and contains the top 10 countries based on spending in 2023
+top_10_countries <- current_us %>%
+  select(Country, `2022`) %>%
+  arrange(desc(`2022`)) %>%
+  head(10)
+
+# Merge share_of_GDP and current_us datasets based on Country column
+merged_data <- merge(share_of_GDP, current_us, by = "Country")
+
+# Select only the rows corresponding to the top 10 countries
+merged_top_10 <- merged_data %>%
+  filter(Country %in% top_10_countries$Country)
+
+# Select relevant columns (Country, 2023 from share_of_GDP, and 2023 from current_us)
+new_table <- merged_top_10 %>%
+  select(Country, `2022.x`, `2022.y`) %>%
+  rename(Share_of_GDP = `2022.x`, Current_US = `2022.y`)
+
+
+# Calculate total GDP by dividing spending (Current_US) by the share of GDP (Share_of_GDP)
+new_table <- new_table %>%
+  mutate(Total_GDP = Current_US / Share_of_GDP)
+
+
+# Calculate total GDP by dividing spending (Current_US) by the share of GDP (Share_of_GDP)
+new_table <- new_table %>%
+  mutate(Total_GDP = Current_US / Share_of_GDP)
+
+# Calculate the remaining GDP which is total GDP minus the military spending
+new_table <- new_table %>%
+  mutate(Remaining_GDP = Total_GDP - Current_US)
+
+# Reshape the data for plotting
+plot_data <- new_table %>%
+  pivot_longer(cols = c(Current_US, Remaining_GDP), names_to = "Type", values_to = "Value")
+```
+
+## Plot Lollipop Chart (Total GDP vs Military Spending)
 
 ```{r}
-#| label: data-cleaning
-
-# Drop rows that the first column is NA
-current_us <- current_us |> 
-  filter(!is.na(`Country`))
-
-current_us
+# Dot plot (Lollipop Chart)
+ggplot(new_table, aes(x = reorder(Country, -Total_GDP))) +
+  geom_segment(aes(x = Country, xend = Country, y = 0, yend = Total_GDP), color = "grey") +
+  geom_point(aes(y = Total_GDP), color = "blue", size = 4) +
+  geom_point(aes(y = Current_US), color = "red", size = 4) +
+  geom_text_repel(aes(y = Total_GDP, label = dollar(Total_GDP / 1e6, suffix = "m")), size = 3, nudge_y = 0.1) +
+  geom_text_repel(aes(y = Current_US, label = dollar(Current_US / 1e6, suffix = "m")), size = 3, nudge_y = -0.1, color = "red") +
+  scale_y_continuous(labels = dollar_format(prefix = "$", suffix = "m", scale = 1e-6)) +
+  labs(title = "Total GDP and Military Spending by Country in 2022",
+       x = "Country", y = "Value (in current US$)") +
+  theme_minimal() +
+  theme(axis.text.x = element_text(angle = 45, hjust = 1))
 ```
