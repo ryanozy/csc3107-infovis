@@ -24,6 +24,8 @@ library(dplyr)
 library(gt)
 library(ggplot2)
 library(tidyverse)
+library(ggnewscale)
+library(scales)
 ```
 
 ## Load Dataset
@@ -84,6 +86,22 @@ current_us <- current_us |>
 current_us
 ```
 
+## Data Transformation
+
+```{r}
+#| label: data-transformation
+
+# Convert Military Spending from Millions to Billions
+current_us <- current_us |> 
+  mutate(across(-Country, ~. / 1000))
+
+# Convert Data to Integer
+current_us <- current_us |> 
+  mutate(across(-Country, as.integer))
+
+current_us
+```
+
 ## Bar Chart
 
 ```{r}
@@ -111,10 +129,266 @@ bar_plot <- top10_long |>
   labs(
     title = "Top 10 Countries by Military Spending from 2018 to 2023",
     x = "Country",
-    y = "Military Spending in US$ (Millions)"
+    y = "Military Spending in US$ (Billions)"
   )
   
 bar_plot
 ```
 
+## Share of GDP
 
+```{r}
+#| label: share-of-gdp
+
+# Drop rows that the first column is NA
+share_gdp <- share_gdp |> 
+  filter(!is.na(`Country`))
+
+# Drop Notes Column
+share_gdp <- share_gdp |> 
+  select(-Notes)
+
+# Change column names from '2018.0' to '2018'
+share_gdp <- share_gdp |> 
+  rename_with(~sub("\\.0$", "", .))
+
+# Drop rows that the second column is NA
+share_gdp <- share_gdp |> 
+  filter(!is.na(`2018`))
+
+# Mutate '...' values to empty
+share_gdp <- share_gdp |> 
+  mutate(across(everything(), ~replace(., . == "...", NA)))
+
+# Convert all columns to numeric
+share_gdp <- share_gdp |> 
+  mutate(across(-Country, as.numeric))
+
+# Retain 10 Countries from current_us
+share_gdp <- share_gdp |>
+  filter(Country %in% current_us$Country)
+
+# Convert to percentage
+share_gdp <- share_gdp |>
+  mutate(across(-Country, ~. * 100))
+
+# Change to 2.dp
+share_gdp <- share_gdp |>
+  mutate(across(-Country, ~round(., 2)))
+
+share_gdp
+```
+
+```{r}
+# Share of GDP Bar Chart
+share_gdp_long <- share_gdp |> 
+  select(Country, `2022`, `2023`) |>
+  pivot_longer(cols = `2022`:`2023`, names_to = "Year", values_to = "Share")
+
+share_gdp_long
+
+# Restructure Data for Bar Chart
+top10_long <- current_us |> 
+  select(Country, `2022`, `2023`) |>
+  pivot_longer(cols = `2022`:`2023`, names_to = "Year", values_to = "Spending")
+
+# Merge Data
+merged_data <- top10_long |>
+  left_join(share_gdp_long, by = c("Country", "Year"))
+
+merged_data
+
+bar_plot2 <- merged_data |>
+  ggplot(aes(x = reorder(Country, Spending), y = Spending, fill = Share)) +
+  geom_col(position = "dodge") +
+  coord_flip() +
+  labs(
+    title = "Top 10 Countries by Military Spending in 2023",
+    x = "Country",
+    y = "Military Spending in US$ (Billions)",
+    fill = "Share of GDP (%)"
+  ) +
+  scale_fill_stepsn(colors = c("tomato", "tomato4"), breaks = seq(0, 30, 3))
+
+bar_plot2
+```
+
+```{r}
+# Restructure Data for Bar Chart
+top10_long <- current_us |> 
+  select(Country, `2022`, `2023`) |>
+  pivot_longer(cols = `2022`:`2023`, names_to = "Year", values_to = "Spending")
+
+# Share of GDP Bar Chart
+share_gdp_long <- share_gdp |> 
+  select(Country, `2022`, `2023`) |>
+  pivot_longer(cols = `2022`:`2023`, names_to = "Year", values_to = "Share")
+
+# Merge Data
+merged_data <- top10_long |>
+  left_join(share_gdp_long, by = c("Country", "Year"))
+
+scale_factor <- max(merged_data$Spending) / max(merged_data$Share)
+
+bar_plot <- ggplot(merged_data, aes(x = reorder(Country, Spending), y = Spending, fill = Year)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  geom_point(aes(y = Share * scale_factor, shape = "Share of GDP"), position = position_dodge(width = 0.9), color = "black", size = 2) +
+  scale_y_continuous(
+    name = "Military Spending in US$ (Billions)",
+    sec.axis = sec_axis(~ . / scale_factor, name = "Share of GDP (%)")
+  ) +
+  labs(
+    title = "Top 10 Countries by Military Spending in 2023",
+    x = "Country",
+    y = "Military Spending in US$ (Billions)",
+    sec.axis = "Share of GDP (%)"
+  ) +
+  coord_flip() +
+  theme_minimal() +
+  guides(
+    fill = guide_legend(title = "Military Spending"),
+    shape = guide_legend(title = "Share of GDP")
+  )
+
+  
+bar_plot
+```
+
+```{r}
+
+# Function to plot of Countries 2022 and 2023 Spending
+plot_country <- function(country) {
+  country_data <- merged_data |>
+    filter(Country == country)
+  
+  country_plot <- country_data |>
+    ggplot(aes(x = Year, y = Spending, fill = Share)) +
+    geom_col(position = "dodge") +
+    coord_flip() +
+    scale_fill_stepsn(colors = c("lightblue", "blue"), breaks = seq(0, 30, 5)) +
+    theme_void()
+  
+  return(country_plot)
+}
+```
+
+```{r}
+# Convert to gt table
+merged_data_summary <- merged_data |>
+  group_by(Country) |>
+  summarise(
+    `2022 Spending (US$ Billion)` = Spending[Year == "2022"],
+    `2023 Spending (US$ Billion)` = Spending[Year == "2023"],
+    `2022 Share of GDP (%)` = Share[Year == "2022"],
+    `2023 Share of GDP (%)` = Share[Year == "2023"]
+  ) |>
+  # Sort by 2023 Spending 
+  arrange(desc(`2023 Spending (US$ Billion)`))
+
+gt_table <- merged_data_summary |>
+  mutate(Function = Country) |>
+  gt() |>
+    tab_header(
+    title = "Top 10 Countries by Military Spending from 2018 to 2023"
+  ) |>
+  cols_label(
+    `2022 Spending (US$ Billion)` = "2022 Spending (US$ Billion)",
+    `2023 Spending (US$ Billion)` = "2023 Spending (US$ Billion)",
+    `2022 Share of GDP (%)` = "2022 Share of GDP (%)",
+    `2023 Share of GDP (%)` = "2023 Share of GDP (%)"
+  ) |>
+  text_transform(
+    locations = cells_body(Function),
+    fn = function(x) {
+     map(x, plot_country) |>
+        ggplot_image(height = 100, aspect_ratio = 3)
+    }
+  )
+  
+
+gt_table
+```
+
+```{r}
+# Function to plot line chart of Countries Spending from 2018 to 2023
+plot_country_line <- function(country) {
+  country_data <- current_us |>
+    filter(Country == country) |>
+    pivot_longer(cols = `2018`:`2023`, names_to = "Year", values_to = "Spending")
+  
+  country_plot <- country_data |>
+    ggplot(aes(x = Year, y = Spending)) +
+    geom_point(size = 20) +
+    geom_line(group=1) +
+    theme_void()
+}
+
+display_change <- function(x) {
+  if (x > 0) {
+    # Add Green Arrow
+    return(paste0('<span style="color:green;">&#9650; ', x, '</span>'))
+  } else {
+    # Add Red Arrow
+    return(paste0('<span style="color:red;">&#9660; ', x, '</span>'))
+  }
+}
+
+merge_new_data <- current_us |>
+  left_join(top10_inc, by = "Country")
+
+new_share_gdp <- share_gdp |>
+  select(Country, `2023`)
+
+merge_new_data <- merge_new_data |>
+  left_join(new_share_gdp, by = "Country")
+
+new_table <- merge_new_data |>
+  mutate(
+    Spending = Country,
+    ) |>
+  select(Country, Spending, '2023.x', Increase, '2023.y') |>
+  gt() |>
+    tab_header(
+    title = "Top 10 Countries by Military Spending Trends"
+  ) |>
+  text_transform(
+    locations = cells_body(Spending),
+    fn = function(x) {
+     map(x, plot_country_line) |>
+        ggplot_image(height = px(50),aspect_ratio = 5)
+    }
+  ) |>
+  text_transform(
+    locations = cells_body(Increase),
+    fn = function(x) {
+      map(x, display_change)
+    }
+  ) |>
+    cols_label(
+    Country = "",
+    Increase = "Change from 2022",
+    '2023.y' = "Share of GDP (%) in 2023",
+    '2023.x' = "2023 Spending (US$ Billion)",
+    Spending = "Spending from 2018 to 2023"
+  ) |>
+  tab_options(
+    data_row.padding = px(0),
+  ) |>
+  tab_style(
+    style = list(
+      cell_text(
+        align = "center",
+        size = px(12),
+      )
+    ),
+    locations = cells_column_labels()
+  ) |>
+  tab_style(
+    style = cell_text(
+        align = "center"
+      ),
+    locations = cells_body()
+  )
+
+new_table
+```
