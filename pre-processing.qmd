@@ -143,39 +143,39 @@ names(share_of_GDP) <- sub("\\.0$", "", names(share_of_GDP))
 names(current_us) <- sub("\\.0$", "", names(current_us))
 
 # Assume top_10_countries is already defined and contains the top 10 countries based on spending in 2023
-top_10_countries <- current_us %>%
-  select(Country, `2022`) %>%
-  arrange(desc(`2022`)) %>%
+top_10_countries <- current_us |>
+  select(Country, `2022`) |>
+  arrange(desc(`2022`)) |>
   head(10)
 
 # Merge share_of_GDP and current_us datasets based on Country column
 merged_data <- merge(share_of_GDP, current_us, by = "Country")
 
 # Select only the rows corresponding to the top 10 countries
-merged_top_10 <- merged_data %>%
+merged_top_10 <- merged_data |>
   filter(Country %in% top_10_countries$Country)
 
 # Select relevant columns (Country, 2023 from share_of_GDP, and 2023 from current_us)
-new_table <- merged_top_10 %>%
-  select(Country, `2022.x`, `2022.y`) %>%
+new_table <- merged_top_10 |>
+  select(Country, `2022.x`, `2022.y`) |>
   rename(Share_of_GDP = `2022.x`, Current_US = `2022.y`)
 
 
 # Calculate total GDP by dividing spending (Current_US) by the share of GDP (Share_of_GDP)
-new_table <- new_table %>%
+new_table <- new_table |>
   mutate(Total_GDP = Current_US / Share_of_GDP)
 
 
 # Calculate total GDP by dividing spending (Current_US) by the share of GDP (Share_of_GDP)
-new_table <- new_table %>%
+new_table <- new_table |>
   mutate(Total_GDP = Current_US / Share_of_GDP)
 
 # Calculate the remaining GDP which is total GDP minus the military spending
-new_table <- new_table %>%
+new_table <- new_table |>
   mutate(Remaining_GDP = Total_GDP - Current_US)
 
 # Reshape the data for plotting
-plot_data <- new_table %>%
+plot_data <- new_table |>
   pivot_longer(cols = c(Current_US, Remaining_GDP), names_to = "Type", values_to = "Value")
 ```
 
