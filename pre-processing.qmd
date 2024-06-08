@@ -233,8 +233,10 @@ scale_factor <- max(merged_data$Spending) / max(merged_data$Share)
 bar_plot <- ggplot(merged_data, aes(x = reorder(Country, Spending), y = Spending, fill = Year)) +
   geom_bar(stat = "identity", position = "dodge") +
   geom_point(aes(y = Share * scale_factor, shape = "Share of GDP"), position = position_dodge(width = 0.9), color = "black", size = 2) +
+  geom_text(aes(y = Share * scale_factor, label = round(Share, 2)), position = position_dodge(width = 0.9), vjust = 0.2, hjust = -0.3, size = 2) +
   scale_y_continuous(
     name = "Military Spending in US$ (Billions)",
+    breaks = seq(0, max(merged_data$Spending), by = 200),  # Adjust breaks for the primary y-axis
     sec.axis = sec_axis(~ . / scale_factor, name = "Share of GDP (%)")
   ) +
   labs(
