@@ -214,6 +214,8 @@ bar_plot2
 ```
 
 ```{r}
+#| fig.width: 10
+#| fig.height: 5
 # Restructure Data for Bar Chart
 top10_long <- current_us |> 
   select(Country, `2022`, `2023`) |>
@@ -232,11 +234,12 @@ scale_factor <- max(merged_data$Spending) / max(merged_data$Share)
 
 bar_plot <- ggplot(merged_data, aes(x = reorder(Country, Spending), y = Spending, fill = Year)) +
   geom_bar(stat = "identity", position = "dodge") +
-  geom_point(aes(y = Share * scale_factor, shape = "Share of GDP"), position = position_dodge(width = 0.9), color = "black", size = 2) +
-  geom_text(aes(y = Share * scale_factor, label = round(Share, 2)), position = position_dodge(width = 0.9), vjust = 0.2, hjust = -0.3, size = 2) +
+  geom_point(aes(y = Share * scale_factor, shape = "Share of GDP", color = Share), position = position_dodge(width = 0.9), size = 1) +
+scale_color_stepsn(colors = c("lightgreen", "darkgreen"), breaks = seq(0, 30, 5)) +
+  geom_text(aes(y = Share * scale_factor, label = round(Share, 2)), position = position_dodge(width = 0.9), vjust = 0.3, hjust = -0.3, size = 3) +
   scale_y_continuous(
     name = "Military Spending in US$ (Billions)",
-    breaks = seq(0, max(merged_data$Spending), by = 200),  # Adjust breaks for the primary y-axis
+    breaks = seq(0, max(merged_data$Spending), by = 100),  # Adjust breaks for the primary y-axis
     sec.axis = sec_axis(~ . / scale_factor, name = "Share of GDP (%)")
   ) +
   labs(
@@ -247,12 +250,14 @@ bar_plot <- ggplot(merged_data, aes(x = reorder(Country, Spending), y = Spending
   ) +
   coord_flip() +
   theme_minimal() +
+  theme(
+    axis.text.x = element_text(size = 10),   # Adjust y-axis text font size
+  ) +
   guides(
     fill = guide_legend(title = "Military Spending"),
     shape = guide_legend(title = "Share of GDP")
   )
 
-  
 bar_plot
 ```
 
