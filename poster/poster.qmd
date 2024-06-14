@@ -48,7 +48,11 @@ Post-pandemic trends reveal varied spending patterns among countries: some have 
 
 ## Data
 
-Military spending and GDP across all countries from 1949 to 2023 that were published by Stockholm International Peace Research Institute (SIPRI). The data have missing value in military spending throughout the years that were represented by "xxx" and "..." were replaced with "N/A" and excluded.
+-   Military spending and share of GDP across all countries from 1949 to 2023 that were published by Stockholm International Peace Research Institute (SIPRI).
+
+-   The data have missing value under military spending and share of GDP throughout the years that were represented by "xxx" and "..." were replaced with "N/A" to drop the data and excluded from the comparison to ensure accuracy and reliability.
+
+-   Performed data filtering, cleaning, and reformatting from the years "2022" to "2023" while converting strings to actual values for military spending. Additionally, we have renamed default labels in the dataset from "2023.0" to "2023" to match desired preferences. Ensuring graphs accurately represented the underlying data without any distortions.
 
 ## Software
 
