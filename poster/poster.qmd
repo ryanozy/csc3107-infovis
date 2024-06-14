@@ -30,22 +30,47 @@ In an increasingly geopolitical world, where tensions seem to be at an all-time 
 
 # Suggested Improvements
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim aeque doleamus animo, cum corpore dolemus, fieri tamen permagna accessio potest, si aliquod aeternum et infinitum impendere malum nobis opinemur. Quod idem licet transferre in voluptatem, ut postea variari voluptas distinguique possit, augeri
+1.  Military spending as a share of GDP does not have a consistent incremental intervals which might cause confusion , so we standardized and implemented consistent interval.
 
-# Implementation 
+2.  Bad color palette for GDP is not as effective as it utilized three color gradient instead of sequential two color, so we implement only two-color gradient to transit smoothly in one direction from light to dark.
 
-Quod idem licet transferre in voluptatem, ut postea variari voluptas distinguique possit, augeri amplificarique non possit. At etiam Athenis, ut e patre audiebam facete et urbane Stoicos irridente, statua est in quo a nobis philosophia defensa et collaudata est, cum id, quod maxime placeat, facere possimus, omnis voluptas assumenda est, om- nis dolor repellendus. Temporibus autem quibusdam et.
+3.  Current chart is too cluttered and messy as higher ranking countries taking more spaces as compared to lower ranking countries causing inconsistent formatting for "Country Names" and "Individual Military Spending".
 
-# Improve Visualization 
+4.  Hard to visually see the ranking across all countries as they are scattered randomly without any specific theme, so we plotted a top 10 horizontal descending bar chart for instantaneous analysis and understanding.
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim aeque doleamus animo, cum corpore dolemus, fieri tamen permagna accessio potest, si aliquod aeternum et infinitum impendere malum nobis opinemur.
+5.  Bubble chart might be useful for larger military spending differences but not minor, as it is hard to do size comparison through human eyes, so we implemented clustered bar chart for easily side by side comparison between "2021" and "2022" across the countries.
 
-# Further Suggestions For Interactivity 
+# Implementation
 
-Quod idem licet transferre in voluptatem, ut postea variari voluptas distinguique possit, augeri amplificarique non possit. At etiam Athenis, ut e patre audiebam facete et urbane Stoicos irridente, statua est in quo a nobis philosophia defensa et collaudata est, cum id, quod maxime placeat, facere possimus, omnis voluptas assumenda est, om- nis dolor repellendus. Temporibus autem quibusdam et.
+## Data
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim aeque doleamus animo, cum corpore dolemus, fieri tamen permagna accessio potest, si aliquod aeternum et infinitum impendere malum nobis
+Military spending and GDP across all countries from 1949 to 2023 that were published by Stockholm International Peace Research Institute (SIPRI). The data have missing value in military spending throughout the years that were represented by "xxx" and "..." were replaced with "N/A" and excluded.
 
-# Further Suggestions For Interactivity 
+## Software
 
-Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magnam aliquam quaerat voluptatem. Ut enim aeque doleamus animo, cum corpore dolemus, fieri tamen permagna accessio potest, si aliquod aeternum et infinitum impendere malum nobis opinemur. Quod idem licet transferre in voluptatem, ut postea variari voluptas distinguique possit, augeri amplificarique non possit. At etiam Athenis, ut e patre audiebam facete et urbane Stoicos irridente, statua est i quo a nobis philosophia defensa et collaudata est, cum id, quod maxime placeat, facere
+| Library    | Usage Descript ion                                                                                  |
+|------------|-----------------------------------------------------------------------------------------------------|
+| readxl     | Used for importing data from Excel files into R                                                     |
+| knitr      | Used for dynamic document generation                                                                |
+| tidyverse  | A collection of packages for data science tasks, including data import, cleaning, and visualization |
+| dplyr      | Provides functions for data manipulation and transformation                                         |
+| ggnewscale | Allows the use of multiple color scales within `ggplot2` plots                                      |
+| scales     | Provides tools for adjusting scales and colors in plots                                             |
+| ggplot2    | Facilitates the creation of complex and layered graphics using The Grammar of Graphics              |
+| gt         | Creates publication-quality tables from data frames                                                 |
+|            |                                                                                                     |
+|            |                                                                                                     |
+
+# Improve Visualization
+
+(insert chart)
+
+Figure 2: Top 10 Highest Overall Military Spending and Shared in GDP in 2022 & 2023
+
+# Further Suggestions For Interactivity
+
+As our visualisation have provided all the necessary information, we did not see the need to implement additional interactive features, including the infotip. However, if the data is visualized in an HTML document, interactive features can be achieved using R packages like plotly. In that scenario, we suggest to remove the military spending and share of GDP value of every countries from the static display and replaced with a pop-ups that provides valuable information and when hovering over any individual bar or scatter point. This would also highlight the activated bar or scatter point by thickening the border.
+
+# Conclusion 
+
+We have successfully implemented all the necessary improvement from the feedback we received for the non-interactive visualization. By changing to a different representative chart such as horizontal bar and scatter point chart from bubble and pyramid chart while reduceing the color gradient from three to two, the revised plot is more systematic and aesthetically pleasing, therefore provides instant understanding at a glance for readers to do comparison across all countries visually.
