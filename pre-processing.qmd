@@ -215,8 +215,8 @@ point_plot <- ggplot() +
   geom_text(data = data_2022, aes(x = Country, y = Share, label = round(Share, 2)), position = position_dodge(width = 0.5), vjust = 1.5, hjust = -0.6, size = 3) +
   coord_flip() +
   guides(
-    fill = guide_colorbar(title = "Share of GDP 2022"),
-    color = guide_colorbar(title = "Share of GDP 2023")
+    fill = guide_colorbar(title = "Share of GDP 2022", order = 2),
+    color = guide_colorbar(title = "Share of GDP 2023", order = 1)
   ) + 
   labs(
     y = "Share of GDP (%)"
@@ -242,4 +242,10 @@ combined_plot <-
 
 # Display the combined plot
 combined_plot
+```
+
+# Export
+```{r}
+#| label: export
+#ggsave("images/top10_countries.png", combined_plot, width = 9, height = 5)
 ```

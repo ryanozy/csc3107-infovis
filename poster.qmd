@@ -96,77 +96,10 @@ We used the Quarto publication framework and the R programming language, along w
 ```{r}
 #| label: fig-ggplot
 #| fig-cap: "Top 10 Countries by Military Spending and Share of GDP (2022-2023)"
-#| fig-width: 6.0
-#| fig-height: 5.8
 #| out-width: 100%
 
-bar_plot <- ggplot(merged_data, aes(x = Country, y = Spending, fill = Year)) +
-  geom_bar(stat = "identity", position = "dodge") +
-  geom_text(aes(label = round(Spending, 1)), 
-            position = position_dodge(width = 0.9), 
-            vjust = 0.3, hjust = -0.5,
-            size = 3) +
-  scale_fill_manual(values = c("2022" = "#3182bd", "2023" = "#de2d26")) +  # Manually specify colors
-  guides(
-    fill = guide_legend(reverse = TRUE, title = "Military Spending")  # Reverse legend order
-  ) +
-  labs(
-    x = "Country",
-    y = "Military Spending in US$ (Billions)"
-  ) +
-  ylim(0, 1000) +  # Extend x-axis limits from 0 to 40
-  coord_flip() +
-  theme_minimal() +
-  theme(legend.position = c(.8, .15))
-
-
-# Separate the data for each year
-data_2022 <- merged_data |>
-  filter(Year == "2022")
-
-data_2023 <- merged_data |>
-  filter(Year == "2023") |>
-  arrange(desc(Spending))
-
-point_plot <- ggplot() +
-  geom_point(data = data_2023, aes(x = reorder(Country, Spending), y = Share, color = Share), shape = 16, position = position_nudge(x=0.3), size = 3.5) +
-  scale_color_gradientn(colors = c("#fcbba1", "#a50f15")) +
-  geom_point(data = data_2022, aes(x = Country, y = Share, fill = Share), shape = 24, position = position_nudge(x=-0.3), size = 3.5) +
-  scale_fill_gradientn(colors = c("#c6dbef", "#08519c")) + 
-  geom_text(data = data_2023, aes(x = Country, y = Share, label = round(Share, 2)), position = position_dodge(width = 0.5), vjust = -1, hjust = -0.4, size = 3) +
-  geom_text(data = data_2022, aes(x = Country, y = Share, label = round(Share, 2)), position = position_dodge(width = 0.5), vjust = 1.5, hjust = -0.6, size = 3) +
-  coord_flip() +
-  guides(
-    fill = guide_colorbar(title = "Share of GDP 2022"),
-    color = guide_colorbar(title = "Share of GDP 2023")
-  ) + 
-  labs(
-    y = "Share of GDP (%)"
-  ) +
-  ylim(0, 45) +  # Extend x-axis limits from 0 to 40
-  theme_minimal() +
-  theme(
-    axis.text.y = element_blank(),  # Remove y-axis text
-    axis.ticks.y = element_blank(), # Remove y-axis ticks
-    axis.title.y = element_blank()  # Remove y-axis title
-  )
-
-# Combine plots with a shared legend at the bottom
-combined_plot <- 
-  (bar_plot + point_plot) + 
-    plot_annotation(
-    title = "Top 10 Countries by Military Spending and Share of GDP (2022-2023)",
-    caption = "Source: SIPRI Military Expenditure Database",
-    theme = theme(
-      plot.title = element_text(hjust = 0.5, face = "bold", size = 14),  # Center the title
-    )
-  )
-
-# Display the combined plot
-combined_plot
-ggsave("images/combined_plot.png", width = 6, height = 5.8)
+include_graphics("images/top10_countries.png")
 ```
-
 
 # Further Suggestions for Interactivity
 
