@@ -9,14 +9,18 @@ format:
     footer-text: "CSC3107 - INFORMATION VISUALISATION 2024"
     footer-emails: "2201186@sit.singaporetech.edu.sg"
     footer-color: "ebcfb2"
-    keywords: ["Military Spending","Geopolitics"]
 ---
 
 # Introduction
 
-In an increasingly geopolitical world, where tensions seem to be at an all-time high, countries are continually challenging both land and maritime boundaries. This complex and volatile landscape has led to a notable trend: an escalation in military spending across the globe. As nations vie for strategic advantages and seek to protect their interests, they are investing heavily in advanced defense technologies, modernizing their armed forces, and expanding their military capabilities. This surge in defense budgets reflects not only the pursuit of security and sovereignty but also the desire to exert influence and maintain competitive parity in a multipolar world. The implications of this trend are profound, affecting international relations, economic priorities, and the global balance of power. Understanding the drivers behind this increase in military expenditure is crucial to comprehending the broader dynamics shaping our contemporary geopolitical environment.[^1]
+A nation's military is an essential asset for enforcing both domestic and foreign policies and safeguarding its citizens. National security, encompassing the protection of citizens, the economy, and national institutions, is a fundamental government responsibility requiring substantial financial investment, commonly referred to as military or defense spending. [^world_population_review] In 2023, global military expenditure surged by 6.8 percent, the highest annual increase since 2009, reaching a record $2443 billion. [^trends_world_military_expenditure] 
 
-[^1]: For more details on specific military spending trends, refer to XYZ report, 2023.
+[^world_population_review]: https://worldpopulationreview.com/country-rankings/military-spending-by-country
+[^trends_world_military_expenditure]: https://www.sipri.org/publications/2024/sipri-fact-sheets/trends-world-military-expenditure-2023
+
+Post-pandemic trends reveal varied spending patterns among countries: some have increased defense budgets due to conflict, while others, especially developing nations, have reduced military spending to focus on social programs. The future trajectory of military expenditure for many countries will likely be influenced by the need to balance fiscal consolidation and social spending against rising global tensions. [^post_pandemic_era] In this project, we will evaluate an infographic highlighting the top 40 countries in military spending in 2022 (Figure 1). To enhance the clarity and interpretation of the data, we will refine the visualizations and plots, ensuring they are more intuitive and informative for viewers. This will involve improving the design and presentation of the data to clearly convey the significant trends and figures in global military expenditure.
+
+[^post_pandemic_era]: https://www.imf.org/external/pubs/ft/fandd/2021/06/military-spending-in-the-post-pandemic-era-clements-gupta-khamidova.htm
 
 # Previous Visualization
 
@@ -58,8 +62,7 @@ Military spending and GDP across all countries from 1949 to 2023 that were publi
 | scales     | Provides tools for adjusting scales and colors in plots                                             |
 | ggplot2    | Facilitates the creation of complex and layered graphics using The Grammar of Graphics              |
 | gt         | Creates publication-quality tables from data frames                                                 |
-|            |                                                                                                     |
-|            |                                                                                                     |
+
 
 # Improve Visualization
 
