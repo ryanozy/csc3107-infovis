@@ -1,3 +1,4 @@
+
 #let poster(
   // The poster's size.
   size: "'36x24' or '48x36''",
@@ -19,11 +20,17 @@
   // or Course Name, Date, Instructor.
   footer_text: "Footer Text",
 
+  // Any URL, like a link to the conference website.
+  footer_url: "Footer URL",
+
   // Email IDs of the authors.
   footer_email_ids: "Email IDs (separated by commas)",
 
   // Color of the footer.
   footer_color: "Hex Color Code",
+  
+  // Text color of the footer.
+  footer_text_color: "Hex Color Code",
 
   // DEFAULTS
   // ========
@@ -63,7 +70,7 @@
   body
 ) = {
   // Set the body font.
-  set text(font: "STIX Two Text", size: 18pt) // Increased body text font size to 18pt
+  set text(font: "STIX Two Text", size: 16pt)
   let sizes = size.split("x")
   let width = int(sizes.at(0)) * 1in
   let height = int(sizes.at(1)) * 1in
@@ -85,13 +92,15 @@
       (top: 1in, left: 2in, right: 2in, bottom: 2in),
     footer: [
       #set align(center)
-      #set text(32pt)
+      #set text(32pt, white)
       #block(
-        fill: rgb(footer_color),
+        fill: rgb(228,51,44),
         width: 100%,
         inset: 20pt,
         radius: 10pt,
         [
+          //#text(font: "Courier", size: footer_url_font_size, footer_url) 
+          //#h(1fr) 
           #text(size: footer_text_font_size, smallcaps(footer_text)) 
           #h(1fr) 
           #text(font: "Courier", size: footer_url_font_size, footer_email_ids)
@@ -108,33 +117,52 @@
   set enum(indent: 10pt, body-indent: 9pt)
   set list(indent: 10pt, body-indent: 9pt)
 
-  // Configure headings without Roman numerals and increase font sizes.
-  set heading(numbering: none)
+  // Configure headings.
+  //set heading(numbering: "I.A.1.")
   show heading: it => locate(loc => {
+    // Find out the final number of the heading counter.
+    let levels = counter(heading).at(loc)
+    let deepest = if levels != () {
+      levels.last()
+    } else {
+      1
+    }
+
     set text(24pt, weight: 400)
     if it.level == 1 [
-      // First-level headings are centered smallcaps with larger font size.
+      // First-level headings are centered smallcaps.
       #set align(center)
-      #set text({ 36pt }) // Increased font size to 36pt
+      #set text({ 32pt })
       #show: smallcaps
       #v(50pt, weak: true)
+      #if it.numbering != none {
+        numbering("I.", deepest)
+        h(7pt, weak: true)
+      }
       #it.body
       #v(35.75pt, weak: true)
       #line(length: 100%)
     ] else if it.level == 2 [
-      // Second-level headings are run-ins with larger font size.
-      #set text(style: "italic", size: 30pt) // Increased font size to 30pt
+      // Second-level headings are run-ins.
+      #set text(style: "italic")
       #v(32pt, weak: true)
+      #if it.numbering != none {
+        numbering("i.", deepest)
+        h(7pt, weak: true)
+      }
       #it.body
       #v(10pt, weak: true)
     ] else [
       // Third level headings are run-ins too, but different.
-      #set text(size: 24pt) // Increased font size to 24pt
+      #if it.level == 3 {
+        numbering("1)", deepest)
+        [ ]
+      }
       _#(it.body):_
     ]
   })
 
-  // Arranging the title, authors, department, and logo in the header.
+  // Arranging the logo, title, authors, and department in the header.
   align(center,
     grid(
       rows: 2,
@@ -144,7 +172,7 @@
       text(title_font_size, title + "\n\n") + 
       text(authors_font_size, emph(authors) + 
           "   (" + departments + ") "),
-      image(univ_logo, width: univ_logo_scale)
+      image(univ_logo, width: univ_logo_scale),
     )
   )
 

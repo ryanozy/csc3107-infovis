@@ -27,11 +27,17 @@
   // or Course Name, Date, Instructor.
   $if(footer-text)$ footer_text: [$footer-text$], $endif$
 
+  // Any URL, like a link to the conference website.
+  $if(footer-url)$ footer_url: [$footer-url$], $endif$
+
   // Emails of the authors.
   $if(footer-emails)$ footer_email_ids: [$footer-emails$], $endif$
 
   // Color of the footer.
   $if(footer-color)$ footer_color: "$footer-color$", $endif$
+  
+  // Text color of the footer.
+  $if(footer-text-color)$ footer_text_color: "$footer-text-color$", $endif$
 
   // DEFAULTS
   // ========
@@ -59,13 +65,13 @@
   $if(title-font-size)$ title_font_size: $title-font-size$, $endif$
 
   // Authors' font size (in pt).
-  $if(authors-font-size)$ authors_font_size: $authors-font_size$, $endif$
+  $if(authors-font-size)$ authors_font_size: $authors-font-size$, $endif$
 
   // Footer's URL and email font size (in pt).
-  $if(footer-url-font-size)$ footer_url_font_size: $footer_url_font_size$, $endif$
+  $if(footer-url-font-size)$ footer_url_font_size: $footer-url-font-size$, $endif$
 
   // Footer's text font size (in pt).
-  $if(footer-text-font-size)$ footer_text_font_size: [$footer_text_font_size$], $endif$
+  $if(footer-text-font-size)$ footer_text_font_size: [$footer-text-font-size$], $endif$
 
   doc,
 )

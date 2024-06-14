@@ -1,0 +1,183 @@
+---
+title: Visualising Military Spending (2022-2023)
+format:
+  poster-typst: 
+    size: "33x23" # Approximately A1
+    poster-authors: "Jeffrey Yap Wan Lin, Liew Jun Wei, Poon Xiang Yuan, Ryan Ong Zhi Yong, Wong Yuxuan, Zaw Wana"
+    departments: "Computing Science"
+    institution-logo: "./images/sit-logo.png"
+    footer-text: "CSC3107 - INFORMATION VISUALISATION 2024"
+    footer-emails: " "
+execute:
+  echo: false
+knitr:
+  opts_chunk:
+    dev: svglite
+---
+
+```{r}
+#| label: setup
+#| include: false
+
+library(knitr)
+library(readxl)
+library(dplyr)
+library(gt)
+library(ggplot2)
+library(tidyverse)
+library(ggnewscale)
+library(scales)
+library(patchwork)
+purl("pre-processing.qmd")
+source("pre-processing.R")
+```
+
+
+
+# Introduction
+
+A nation's military is an essential asset for enforcing both domestic and foreign policies and safeguarding its citizens. National security, encompassing the protection of citizens, the economy, and national institutions, is a fundamental government responsibility requiring substantial financial investment, commonly referred to as military or defense spending. [^world_population_review] In 2023, global military expenditure surged by 6.8 percent, the highest annual increase since 2009, reaching a record $2443 billion. [^trends_world_military_expenditure] 
+
+[^world_population_review]: https://worldpopulationreview.com/country-rankings/military-spending-by-country
+[^trends_world_military_expenditure]: https://www.sipri.org/publications/2024/sipri-fact-sheets/trends-world-military-expenditure-2023
+
+Post-pandemic trends reveal varied spending patterns among countries: some have increased defense budgets due to conflict, while others, especially developing nations, have reduced military spending to focus on social programs. The future trajectory of military expenditure for many countries will likely be influenced by the need to balance fiscal consolidation and social spending against rising global tensions. [^post_pandemic_era] In this project, we will evaluate an infographic highlighting the top 40 countries in military spending in 2022 (Figure 1). To enhance the clarity and interpretation of the data, we will refine the visualizations and plots, ensuring they are more intuitive and informative for viewers. This will involve improving the design and presentation of the data to clearly convey the significant trends and figures in global military expenditure.
+
+[^post_pandemic_era]: https://www.imf.org/external/pubs/ft/fandd/2021/06/military-spending-in-the-post-pandemic-era-clements-gupta-khamidova.html
+
+# Previous Visualization
+
+
+```{r}
+#| label: fig-wsj-on-poster
+#| fig-cap: "Military spending across all countries published by Stockholm International Peace Research Institute (SIPRI)"
+#| out-width: 40%
+
+include_graphics("images/military_spending.jpg")
+```
+
+
+# Strengths
+
+-   The bubble chart visually represents the size of military spending across all countries, with larger bubble indicating a higher spending while providing additional spending value together with ranking allows for quick analysis.
+-   Military spending as a share of GDP across all countries is represented using color coding, with lighter colors indicating lower percentage while brighter colors indicating higher percentage highlighting the severity of the country.
+
+# Suggested Improvements
+
+1.  Military spending as a share of GDP does not have a consistent incremental intervals which might cause confusion , so we standardized and implemented consistent interval.
+
+2.  Bad color palette for GDP is not as effective as it utilized three color gradient instead of sequential two color, so we implement only two-color gradient to transit smoothly in one direction from light to dark.
+
+3.  Current chart is too cluttered and messy as higher ranking countries taking more spaces as compared to lower ranking countries causing inconsistent formatting for "Country Names" and "Individual Military Spending".
+
+4.  Hard to visually see the ranking across all countries as they are scattered randomly without any specific theme, so we plotted a top 10 horizontal descending bar chart for instantaneous analysis and understanding.
+
+5.  Bubble chart might be useful for larger military spending differences but not minor, as it is hard to do size comparison through human eyes, so we implemented clustered bar chart for easily side by side comparison between "2021" and "2022" across the countries.
+    
+
+# Implementation
+
+## Data
+
+*   Military spending and share of GDP across all countries from 1949 to 2023 that were published by Stockholm International Peace Research Institute (SIPRI).
+*   The data have missing value under military spending and share of GDP throughout the years that were represented by "xxx" and "..." were replaced with "N/A" to drop the data and excluded from the comparison to ensure accuracy and reliability.
+*   Performed data filtering, cleaning, and reformatting from the years "2022" to "2023" while converting strings to actual values for military spending. Additionally, we have renamed default labels in the dataset from "2023.0" to "2023" to match desired preferences. Ensuring graphs accurately represented the underlying data without any distortions.
+
+## Software
+
+We used the Quarto publication framework and the R programming language, along with the following third-party packages:
+
+*   readxl: Used for importing data from Excel files into R 
+*   knitr: Used for dynamic document generation 
+*   tidyverse: A collection of packages for data science tasks, including data import, cleaning, and visualization
+*   ggplot2: Facilitates the creation of complex and layered graphics using The Grammar of Graphics
+*   ggnewscale: Allows the use of multiple color scales within `ggplot2` plots
+*   scales: Provides tools for adjusting scales and colors in plots
+
+# Improved Visualization
+
+
+```{r}
+#| label: fig-ggplot
+#| fig-cap: "Top 10 Countries by Military Spending and Share of GDP (2022-2023)"
+#| fig-width: 6.0
+#| fig-height: 5.8
+#| out-width: 100%
+
+bar_plot <- ggplot(merged_data, aes(x = Country, y = Spending, fill = Year)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  geom_text(aes(label = round(Spending, 1)), 
+            position = position_dodge(width = 0.9), 
+            vjust = 0.3, hjust = -0.5,
+            size = 3) +
+  scale_fill_manual(values = c("2022" = "#3182bd", "2023" = "#de2d26")) +  # Manually specify colors
+  guides(
+    fill = guide_legend(reverse = TRUE, title = "Military Spending")  # Reverse legend order
+  ) +
+  labs(
+    x = "Country",
+    y = "Military Spending in US$ (Billions)"
+  ) +
+  ylim(0, 1000) +  # Extend x-axis limits from 0 to 40
+  coord_flip() +
+  theme_minimal() +
+  theme(legend.position = c(.8, .15))
+
+
+# Separate the data for each year
+data_2022 <- merged_data |>
+  filter(Year == "2022")
+
+data_2023 <- merged_data |>
+  filter(Year == "2023") |>
+  arrange(desc(Spending))
+
+point_plot <- ggplot() +
+  geom_point(data = data_2023, aes(x = reorder(Country, Spending), y = Share, color = Share), shape = 16, position = position_nudge(x=0.3), size = 3.5) +
+  scale_color_gradientn(colors = c("#fcbba1", "#a50f15")) +
+  geom_point(data = data_2022, aes(x = Country, y = Share, fill = Share), shape = 24, position = position_nudge(x=-0.3), size = 3.5) +
+  scale_fill_gradientn(colors = c("#c6dbef", "#08519c")) + 
+  geom_text(data = data_2023, aes(x = Country, y = Share, label = round(Share, 2)), position = position_dodge(width = 0.5), vjust = -1, hjust = -0.4, size = 3) +
+  geom_text(data = data_2022, aes(x = Country, y = Share, label = round(Share, 2)), position = position_dodge(width = 0.5), vjust = 1.5, hjust = -0.6, size = 3) +
+  coord_flip() +
+  guides(
+    fill = guide_colorbar(title = "Share of GDP 2022"),
+    color = guide_colorbar(title = "Share of GDP 2023")
+  ) + 
+  labs(
+    y = "Share of GDP (%)"
+  ) +
+  ylim(0, 45) +  # Extend x-axis limits from 0 to 40
+  theme_minimal() +
+  theme(
+    axis.text.y = element_blank(),  # Remove y-axis text
+    axis.ticks.y = element_blank(), # Remove y-axis ticks
+    axis.title.y = element_blank()  # Remove y-axis title
+  )
+
+# Combine plots with a shared legend at the bottom
+combined_plot <- 
+  (bar_plot + point_plot) + 
+    plot_annotation(
+    title = "Top 10 Countries by Military Spending and Share of GDP (2022-2023)",
+    caption = "Source: SIPRI Military Expenditure Database",
+    theme = theme(
+      plot.title = element_text(hjust = 0.5, face = "bold", size = 14),  # Center the title
+    )
+  )
+
+# Display the combined plot
+combined_plot
+ggsave("images/combined_plot.png", width = 6, height = 5.8)
+```
+
+
+
+# Further Suggestions for Interactivity
+
+Our visualization can be further improved by implementing interactive features using the `infotip` library to provide necessary information instead of statically displaying value for every point which will further reduces cluttering. If the data is visualized in an HTML document, interactive features can be achieved using R packages like `plotly`. In that scenario, we suggest to remove the military spending and share of GDP value of every countries from the static display and replaced with a pop-ups that provides valuable information and when hovering over any individual bar or scatter point. This would also highlight the activated bar or scatter point by thickening the border.
+
+# Conclusion
+
+We have successfully implemented all the necessary improvement from the feedback we received for the non-interactive visualization. By changing to a different representative chart such as horizontal bar and scatter point chart from bubble and pyramid chart while reducing the color gradient from three to two, the revised plot is more systematic and aesthetically pleasing, therefore provides instant understanding at a glance for readers to do comparison across all countries visually.
+
