@@ -71,9 +71,9 @@ We used the Quarto publication framework and the R programming language, along w
 
 Figure 2: Top 10 Highest Overall Military Spending and Shared in GDP in 2022 & 2023
 
-# Further Suggestions For Interactivity
+# Future Improvement
 
-As our visualisation have provided all the necessary information, we did not see the need to implement additional interactive features, including the infotip. However, if the data is visualized in an HTML document, interactive features can be achieved using R packages like plotly. In that scenario, we suggest to remove the military spending and share of GDP value of every countries from the static display and replaced with a pop-ups that provides valuable information and when hovering over any individual bar or scatter point. This would also highlight the activated bar or scatter point by thickening the border.
+Our visualization can be further improved by implementing interactive features using the infotip library to provide necessary information instead of statically displaying value for every point which will further reduces cluttering. If the data is visualized in an HTML document, interactive features can be achieved using R packages like plotly. In that scenario, we suggest to remove the military spending and share of GDP value of every countries from the static display and replaced with a pop-ups that provides valuable information and when hovering over any individual bar or scatter point. This would also highlight the activated bar or scatter point by thickening the border.
 
 # Conclusion 
 
