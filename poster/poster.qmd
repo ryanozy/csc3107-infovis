@@ -52,17 +52,14 @@ Military spending and GDP across all countries from 1949 to 2023 that were publi
 
 ## Software
 
-| Library    | Usage Descript ion                                                                                  |
-|------------|-----------------------------------------------------------------------------------------------------|
-| readxl     | Used for importing data from Excel files into R                                                     |
-| knitr      | Used for dynamic document generation                                                                |
-| tidyverse  | A collection of packages for data science tasks, including data import, cleaning, and visualization |
-| dplyr      | Provides functions for data manipulation and transformation                                         |
-| ggnewscale | Allows the use of multiple color scales within `ggplot2` plots                                      |
-| scales     | Provides tools for adjusting scales and colors in plots                                             |
-| ggplot2    | Facilitates the creation of complex and layered graphics using The Grammar of Graphics              |
-| gt         | Creates publication-quality tables from data frames                                                 |
+We used the Quarto publication framework and the R programming language, along with the following third-party packages:
 
+-   readxl: Used for importing data from Excel files into R 
+-   knitr: Used for dynamic document generation 
+-   tidyverse: A collection of packages for data science tasks, including data import, cleaning, and visualization
+-   ggplot2: Facilitates the creation of complex and layered graphics using The Grammar of Graphics
+-   ggnewscale: Allows the use of multiple color scales within `ggplot2` plots
+-   scales: Provides tools for adjusting scales and colors in plots
 
 # Improve Visualization
 
