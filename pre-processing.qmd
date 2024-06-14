@@ -399,3 +399,81 @@ new_table <- merge_new_data |>
 
 new_table
 ```
+
+# after consultation
+```{r}
+#| label: after-consultation
+#| fig.width: 10
+#| fig.height: 5
+# Restructure Data for Bar Chart
+top10_long <- current_us |> 
+  select(Country, `2022`, `2023`) |>
+  pivot_longer(cols = `2022`:`2023`, names_to = "Year", values_to = "Spending")
+
+# Share of GDP Bar Chart
+share_gdp_long <- share_gdp |> 
+  select(Country, `2022`, `2023`) |>
+  pivot_longer(cols = `2022`:`2023`, names_to = "Year", values_to = "Share")
+
+# Merge Data
+merged_data <- top10_long |>
+  left_join(share_gdp_long, by = c("Country", "Year"))
+
+scale_factor <- max(merged_data$Spending) / max(merged_data$Share)
+
+# Bar plot
+bar_plot <- ggplot(merged_data, aes(x = reorder(Country, Spending), y = Spending, fill = Year)) +
+  geom_bar(stat = "identity", position = "dodge") +
+  geom_text(aes(label = round(Spending, 1)), 
+            position = position_dodge(width = 0.9), 
+            vjust = 0.3, hjust = -0.5,
+            size = 3) +
+  scale_y_continuous(
+    name = "Military Spending in US$ (Billions)",
+    breaks = seq(0, max(merged_data$Spending), by = 250),  # Adjust breaks for the primary y-axis
+  ) +
+  scale_fill_manual(values = c("2022" = "#00AFBB", "2023" = "#E7B800")) +  # Manually specify colors
+  guides(
+    fill = guide_legend(reverse = TRUE, title = "Military Spending")  # Reverse legend order
+  ) +
+  labs(
+    x = "Country",
+    y = "Military Spending in US$ (Billions)"
+  ) +
+  ylim(0, 1000) +  # Extend x-axis limits from 0 to 40
+  coord_flip() +
+  theme_minimal()
+
+# Point plot with different shapes for different years and swapped legend order
+point_plot <- ggplot(merged_data, aes(x = reorder(Country, Spending), y = Share, shape = Year, color = Share)) +
+  geom_point(position = position_dodge(width = 0.9), size = 3) +
+  geom_text(aes(label = round(Share, 2)), position = position_dodge(width = 0.9), vjust = 0, hjust = -0.3, size = 3) +
+  coord_flip() +
+  scale_shape_manual(values = c("2022" = 16, "2023" = 15)) +  # Use circle (16) and square (15) shapes
+  scale_color_stepsn(colors = c("lightgreen", "darkgreen"), breaks = seq(0, 30, 5)) +
+  guides(
+    shape = guide_legend(reverse = TRUE, title = "Year"),  # Reverse legend order
+    color = guide_colorbar(title = "Share of GDP")
+  ) + 
+  labs(
+    x = NULL,
+    y = "Share of GDP (%)"
+  ) +
+  ylim(0, 45) +  # Extend x-axis limits from 0 to 40
+  theme_minimal() +
+  theme(
+    axis.text.y = element_blank(),  # Remove y-axis text
+    axis.ticks.y = element_blank(), # Remove y-axis ticks
+    axis.title.y = element_blank()  # Remove y-axis title
+  )
+
+# Combine plots with a shared legend at the bottom
+combined_plot <- 
+  (bar_plot + point_plot) + 
+  plot_layout(guides = "collect") &
+  theme(legend.position = "right") &
+  plot_annotation(title = "Top 10 Countries by Military Spending in 2023 and Share of GDP")
+
+# Display the combined plot
+combined_plot
+```
