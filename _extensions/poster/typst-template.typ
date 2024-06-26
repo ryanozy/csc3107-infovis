@@ -70,7 +70,7 @@
   body
 ) = {
   // Set the body font.
-  set text(font: "STIX Two Text", size: 16pt)
+  set text(font: "Helvetica", size: 16pt)
   let sizes = size.split("x")
   let width = int(sizes.at(0)) * 1in
   let height = int(sizes.at(1)) * 1in
@@ -99,11 +99,11 @@
         inset: 20pt,
         radius: 10pt,
         [
-          //#text(font: "Courier", size: footer_url_font_size, footer_url) 
+          //#text(font: "Helvetica", size: footer_url_font_size, footer_url) 
           //#h(1fr) 
           #text(size: footer_text_font_size, smallcaps(footer_text)) 
           #h(1fr) 
-          #text(font: "Courier", size: footer_url_font_size, footer_email_ids)
+          #text(font: "Helvetica", size: footer_url_font_size, footer_email_ids)
         ]
       )
     ]

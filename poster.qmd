@@ -7,7 +7,7 @@ format:
     departments: "Computing Science"
     institution-logo: "./images/sit-logo.png"
     footer-text: "CSC3107 - INFORMATION VISUALISATION 2024"
-    footer-emails: " "
+    footer-emails: "2201186@sit.singaporetech.edu.sg"
 execute:
   echo: false
 knitr:
@@ -22,10 +22,8 @@ knitr:
 library(knitr)
 library(readxl)
 library(dplyr)
-library(gt)
 library(ggplot2)
 library(tidyverse)
-library(ggnewscale)
 library(scales)
 library(patchwork)
 purl("pre-processing.qmd")
@@ -45,7 +43,7 @@ A nation's military is an essential asset for enforcing both domestic and foreig
 
 ```{r}
 #| label: fig-wsj-on-poster
-#| fig-cap: "Military spending across all countries published by VisualCapitalist[^poster_source]. Data Source: Stockholm International Peace Research Institute (SIPRI)"
+#| fig-cap: "Military spending across the top 40 countries published by VisualCapitalist[^poster_source]. Source: Stockholm International Peace Research Institute (SIPRI)"
 #| out-width: 50%
 
 include_graphics("images/military_spending.jpg")
@@ -101,22 +99,33 @@ We used the Quarto publication framework and the R programming language, along w
 
 bar_plot <- ggplot(merged_data, aes(x = Country, y = Spending, fill = Year)) +
   geom_bar(stat = "identity", position = "dodge") +
-  geom_text(aes(label = round(Spending, 1)), 
-            position = position_dodge(width = 0.9), 
-            vjust = 0.3, hjust = -0.5,
-            size = 6) +
-  scale_fill_manual(values = c("2022" = "#3182bd", "2023" = "#de2d26")) +  # Manually specify colors
+  geom_text(aes(label = round(Spending, 1)),
+    position = position_dodge(width = 0.9),
+    vjust = 0.3, hjust = -0.5,
+    size = 6
+  ) +
+  # Manually specify colors
+  scale_fill_manual(values = c("2022" = "#3182bd", "2023" = "#de2d26")) +
   guides(
-    fill = guide_legend(reverse = TRUE, title = "Military Spending")  # Reverse legend order
+    # Reverse legend order
+    fill = guide_legend(reverse = TRUE, title = "Military Spending")
   ) +
   labs(
     x = "Country",
     y = "Military Spending in US$ (Billions)"
   ) +
-  ylim(0, 1000) +  # Extend x-axis limits from 0 to 40
+  ylim(0, 1000) + # Extend x-axis limits from 0 to 40
   coord_flip() +
   theme_minimal() +
-  theme(legend.position = c(.8, .15))
+  theme(
+    legend.position = c(.8, .15),
+    # Adjust the legend text size
+    legend.text = element_text(size = 20),
+    # Adjust the legend title size
+    legend.title = element_text(size = 20, face = "bold"),
+    # Adjust the size of the color bar guide
+    legend.key.size = unit(3, "lines")
+  )
 
 
 # Separate the data for each year
@@ -128,36 +137,95 @@ data_2023 <- merged_data |>
   arrange(desc(Spending))
 
 point_plot <- ggplot() +
-  geom_point(data = data_2023, aes(x = reorder(Country, Spending), y = Share, color = Share), shape = 16, position = position_nudge(x=0.3), size = 6) +
-  scale_color_gradientn(colors = c("#fcbba1", "#a50f15")) +
-  geom_point(data = data_2022, aes(x = Country, y = Share, fill = Share), shape = 24, position = position_nudge(x=-0.3), size = 6) +
-  scale_fill_gradientn(colors = c("#c6dbef", "#08519c")) + 
-  geom_text(data = data_2023, aes(x = Country, y = Share, label = round(Share, 2)), position = position_dodge(width = 0.5), vjust = -1, hjust = -0.4, size = 8) +
-  geom_text(data = data_2022, aes(x = Country, y = Share, label = round(Share, 2)), position = position_dodge(width = 0.5), vjust = 1.5, hjust = -0.6, size = 8) +
+  geom_point(
+    data = data_2023,
+    aes(
+      x = reorder(Country, Spending),
+      y = Share,
+      color = Share
+    ),
+    shape = 16,
+    position = position_nudge(x = 0.3),
+    size = 6
+  ) +
+  scale_color_gradientn(
+    colors = c("#fcbba1", "#a50f15"),
+    labels = percent_format(scale = 1)
+  ) +
+  geom_point(
+    data = data_2022,
+    aes(
+      x = Country,
+      y = Share,
+      fill = Share
+    ),
+    shape = 24,
+    position = position_nudge(x = -0.3),
+    size = 6
+  ) +
+  scale_fill_gradientn(
+    colors = c("#c6dbef", "#08519c"),
+    labels = percent_format(scale = 1)
+  ) +
+  geom_text(
+    data = data_2023,
+    aes(
+      x = Country,
+      y = Share,
+      label = paste0(round(Share, 2), "%")
+    ),
+    position = position_dodge(width = 0.5),
+    vjust = -1,
+    hjust = -0.4,
+    size = 6
+  ) +
+  geom_text(
+    data = data_2022,
+    aes(
+      x = Country,
+      y = Share,
+      label = paste0(round(Share, 2), "%")
+    ),
+    position = position_dodge(width = 0.5),
+    vjust = 1.5,
+    hjust = -0.6,
+    size = 6
+  ) +
   coord_flip() +
   guides(
     fill = guide_colorbar(title = "Share of GDP 2022", order = 2),
     color = guide_colorbar(title = "Share of GDP 2023", order = 1)
-  ) + 
+  ) +
   labs(
     y = "Share of GDP (%)"
   ) +
-  ylim(0, 45) +  # Extend x-axis limits from 0 to 40
+  ylim(0, 45) + # Extend x-axis limits from 0 to 40
   theme_minimal() +
   theme(
-    axis.text.y = element_blank(),  # Remove y-axis text
-    axis.ticks.y = element_blank(), # Remove y-axis ticks
-    axis.title.y = element_blank()  # Remove y-axis title
+    # Remove y-axis text
+    axis.text.y = element_blank(),
+    # Remove y-axis ticks
+    axis.ticks.y = element_blank(),
+    # Remove y-axis title
+    axis.title.y = element_blank(),
+    # Adjust the legend text size
+    legend.text = element_text(size = 15),
+    # Adjust the legend title size
+    legend.title = element_text(size = 15, face = "bold"),
+    # Adjust the size of the color bar guide
+    legend.key.size = unit(1.5, "lines")
   )
 
 # Combine plots with a shared legend at the bottom
-combined_plot <- 
-  (bar_plot + point_plot) + 
-    plot_annotation(
-    title = "Top 10 Countries by Military Spending and Share of GDP (2022-2023)",
+combined_plot <-
+  (bar_plot + point_plot) +
+  plot_annotation(
+    title =
+    "Top 10 Countries by Military Spending and Share of GDP (2022-2023)",
     caption = "Source: SIPRI Military Expenditure Database",
     theme = theme(
-      plot.title = element_text(hjust = 0.5, face = "bold", size = 30),  # Center the title
+      # Center the title
+      plot.title = element_text(hjust = 0.5, face = "bold", size = 30),
     )
   )
 
