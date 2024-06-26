@@ -1,26 +1,4 @@
----
-title: "CSC3107 - Information Visualisation Project"
-subtitle: "Data Preparation by P1 Orchid"
-format: html
-authors:
-  - Jeffrey Yap Wan Lin
-  - Liew Jun Wei
-  - Poon Xiang Yuan
-  - Ryan Ong Zhi Yong
-  - Wong Yuxuan
-  - Zaw Wana
-knitr:
-  opts_chunk:
-    fig.width: 7.5
-    fig.height: 5
-    fig.align: center
----
-
-# Data Preparation
-
-## Load Libraries
-
-```{r}
+## -----------------------------------------------------------------------------
 #| label: load-libraries
 #| message: false
 
@@ -32,11 +10,9 @@ library(tidyverse)
 library(ggnewscale)
 library(scales)
 library(patchwork)
-```
 
-## Load Dataset
 
-```{r}
+## -----------------------------------------------------------------------------
 #| label: load-dataset
 #| message: false
 
@@ -49,16 +25,14 @@ share_gdp <- read_excel(
   "SIPRI-Milex-data-2018-2023.xlsx",
   sheet = "Share of GDP",
   skip = 5)
-```
 
-```{r}
+
+## -----------------------------------------------------------------------------
 current_us
 share_gdp
-```
 
-## Data Cleaning
 
-```{r}
+## -----------------------------------------------------------------------------
 #| label: data-cleaning
 
 # Drop rows that the first column is NA
@@ -90,11 +64,9 @@ current_us <- current_us |>
   slice_max(`2023`, n = 10)
 
 current_us
-```
 
-## Data Transformation
 
-```{r}
+## -----------------------------------------------------------------------------
 #| label: data-transformation
 
 # Convert Military Spending from Millions to Billions
@@ -106,11 +78,9 @@ current_us <- current_us |>
   mutate(across(-Country, as.integer))
 
 current_us
-```
 
-## Share of GDP
 
-```{r}
+## -----------------------------------------------------------------------------
 #| label: share-of-gdp
 
 # Drop rows that the first column is NA
@@ -150,9 +120,9 @@ share_gdp <- share_gdp |>
   mutate(across(-Country, ~round(., 2)))
 
 share_gdp
-```
 
-```{r}
+
+## -----------------------------------------------------------------------------
 #| label: after-consultation
 #| fig.width: 10
 #| fig.height: 5
@@ -242,10 +212,9 @@ combined_plot <-
 
 # Display the combined plot
 combined_plot
-```
 
-# Export
-```{r}
+
+## -----------------------------------------------------------------------------
 #| label: export
 ggsave("images/top10_countries.png", combined_plot, width = 15, height = 12)
-```
+
