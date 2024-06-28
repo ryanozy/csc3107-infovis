@@ -24,7 +24,7 @@
   footer_url: "Footer URL",
 
   // Email IDs of the authors.
-  footer_email_ids: "Email IDs (separated by commas)",
+  footer_email_ids: " ",
 
   // Color of the footer.
   footer_color: "Hex Color Code",
@@ -61,7 +61,7 @@
   authors_font_size: "36",
 
   // Footer's URL and email font size (in pt).
-  footer_url_font_size: "30",
+  footer_url_font_size: "20",
 
   // Footer's text font size (in pt).
   footer_text_font_size: "40",

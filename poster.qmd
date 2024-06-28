@@ -7,7 +7,7 @@ format:
     departments: "Computing Science"
     institution-logo: "./images/sit-logo.png"
     footer-text: "CSC3107 - INFORMATION VISUALISATION 2024"
-    footer-emails: "2201186@sit.singaporetech.edu.sg"
+    footer-emails: "2201018, 2200829, 2200559, 2201186, 2202497, 2201190"
 execute:
   echo: false
 knitr:
@@ -82,30 +82,36 @@ include_graphics("images/military_spending.jpg")
 We used the Quarto publication framework and the R programming language, along with the following third-party packages:
 
 1.    readxl: Used for importing data from Excel files into R 
-2.    knitr: Used for dynamic document generation 
-3.    tidyverse: A collection of packages for data science tasks, including data import, cleaning, and visualization
-4.    ggplot2: Facilitates the creation of complex and layered graphics using The Grammar of Graphics
-5.    ggnewscale: Allows the use of multiple color scales within `ggplot2` plots
+2.    knitr: Used for dynamic document generation
+3.    dplyr: A grammar of data manipulation for data wrangling tasks
+4.    tidyverse: A collection of packages for data science tasks, including data import, cleaning, and visualization
+5.    ggplot2: Facilitates the creation of complex and layered graphics using The Grammar of Graphics
 6.    scales: Provides tools for adjusting scales and colors in plots
+7.    patchwork: Enables the combination of multiple plots into a single figure
 
 # Improved Visualization
 
 ```{r}
 #| label: fig-ggplot
-#| fig-cap: "Top 10 Countries by Military Spending and Share of GDP (2022-2023)"
+#| fig-cap: "Top 10 Countries by Military Spending and Spending Against GDP (2022-2023)"
 #| fig-width: 15
 #| fig-height: 10
 #| out-width: 100%
 
-bar_plot <- ggplot(merged_data, aes(x = Country, y = Spending, fill = Year)) +
+bar_plot <- 
+  ggplot(
+    merged_data,
+    aes(x = Country, y = Spending, fill = Year)
+  ) +
   geom_bar(stat = "identity", position = "dodge") +
+  scale_x_discrete(labels = function(x) str_wrap(x, width = 10)) +
   geom_text(aes(label = round(Spending, 1)),
     position = position_dodge(width = 0.9),
     vjust = 0.3, hjust = -0.5,
     size = 6
   ) +
   # Manually specify colors
-  scale_fill_manual(values = c("2022" = "#3182bd", "2023" = "#de2d26")) +
+  scale_fill_manual(values = c("2022" = "#08519c", "2023" = "#de2d26")) +
   guides(
     # Reverse legend order
     fill = guide_legend(reverse = TRUE, title = "Military Spending")
@@ -124,7 +130,9 @@ bar_plot <- ggplot(merged_data, aes(x = Country, y = Spending, fill = Year)) +
     # Adjust the legend title size
     legend.title = element_text(size = 20, face = "bold"),
     # Adjust the size of the color bar guide
-    legend.key.size = unit(3, "lines")
+    legend.key.size = unit(3, "lines"),
+    axis.title = element_text(size = 20),
+    axis.text = element_text(size = 20),
   )
 
 
@@ -149,7 +157,7 @@ point_plot <- ggplot() +
     size = 6
   ) +
   scale_color_gradientn(
-    colors = c("#fcbba1", "#a50f15"),
+    colors = c("#fcbba1", "#de2d26"),
     labels = percent_format(scale = 1)
   ) +
   geom_point(
@@ -186,7 +194,7 @@ point_plot <- ggplot() +
       y = Share,
       label = paste0(round(Share, 2), "%")
     ),
-    position = position_dodge(width = 0.5),
+    position = position_nudge(x = -0.05),
     vjust = 1.5,
     hjust = -0.6,
     size = 6
@@ -213,7 +221,9 @@ point_plot <- ggplot() +
     # Adjust the legend title size
     legend.title = element_text(size = 15, face = "bold"),
     # Adjust the size of the color bar guide
-    legend.key.size = unit(1.5, "lines")
+    legend.key.size = unit(1.5, "lines"),
+    axis.title = element_text(size = 20),
+    axis.text.x = element_text(size = 20)
   )
 
 # Combine plots with a shared legend at the bottom
