@@ -58,15 +58,15 @@ include_graphics("images/military_spending.jpg")
 
 # Suggested Improvements
 
-1.    Military spending as a share of GDP does not have a consistent incremental intervals which might cause confusion , so we standardized and implemented consistent interval.
+1.    Military spending as a share of GDP lacks consistent incremental intervals, which might cause confusion. Therefore, we standardized and implemented consistent intervals.
 
 2.    Bad color palette for GDP is not as effective as it utilized three color gradient instead of sequential two color, so we implement only two-color gradient to transit smoothly in one direction from light to dark.
 
 3.    Current chart is too cluttered and messy as higher ranking countries taking more spaces as compared to lower ranking countries causing inconsistent formatting for "Country Names" and "Individual Military Spending".
 
-4.    Hard to visually see the ranking across all countries as they are scattered randomly without any specific theme, so we plotted a top 10 horizontal descending bar chart for instantaneous analysis and understanding.
+4.    It can be visually difficult to determine the rank of all countries as they were plotted according to their greopraphical position, requiring viewers to know the position of countries on the world map. Therefore, we plotted a top 10 horizontal descending bar chart for instantaneous analysis and understanding.
 
-5.    Bubble chart might be useful for larger military spending differences but not minor, as it is hard to do size comparison through human eyes, so we implemented clustered bar chart for easily side by side comparison between "2021" and "2022" across the countries.
+5.    Bubble chart might be useful for larger military spending differences but not minor, as it is hard to do size comparison through human eyes, so we implemented clustered bar chart for easily side by side comparison between "2022" and "2023" across the countries.
     
 
 # Implementation
@@ -196,7 +196,7 @@ point_plot <- ggplot() +
     ),
     position = position_nudge(x = -0.05),
     vjust = 1.5,
-    hjust = -0.6,
+    hjust = -0.4,
     size = 6
   ) +
   coord_flip() +
