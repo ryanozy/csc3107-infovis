@@ -33,11 +33,11 @@ source("pre-processing.R")
 
 # Introduction
 
-A nation's military is an essential asset for enforcing both domestic and foreign policies and safeguarding its citizens. National security, encompassing the protection of citizens, the economy, and national institutions, is a fundamental government responsibility requiring substantial financial investment, commonly referred to as military or defense spending. [^world_population_review] In 2023, global military expenditure surged by 6.8 percent, the highest annual increase since 2009, reaching a record $2443 billion [^trends_world_military_expenditure]. Post-pandemic trends reveal varied spending patterns among countries: some have increased defense budgets due to conflict, while others, especially developing nations, have reduced military spending to focus on social programs. The future trajectory of military expenditure for many countries will likely be influenced by the need to balance fiscal consolidation and social spending against rising global tensions. [^post_pandemic_era] In this project, we will evaluate an info graphic highlighting the top 40 countries in military spending in 2022 (Figure 1). To enhance the clarity and interpretation of the data, we will refine the visualizations and plots, ensuring they are more intuitive and informative for viewers. This will involve improving the design and presentation of the data to clearly convey the significant trends and figures in global military expenditure.
+A nation's military is an essential asset for enforcing both domestic and foreign policies and safeguarding its citizens. National security, encompassing the protection of citizens, the economy, and national institutions, is a fundamental government responsibility requiring substantial financial investment, commonly referred to as military or defense spending. [^world_population_review] In 2023, global military expenditure surged by 6.8 percent, the highest annual increase since 2009, reaching a record $2443 billion [^trends_world_military_expenditure]. Post-pandemic trends reveal varied spending patterns among countries: some have increased defense budgets due to conflict, while others, especially developing nations, have reduced military spending to focus on social programs. The future trajectory of military expenditure for many countries will likely be influenced by the need to balance fiscal consolidation and social spending against rising global tensions. [^post_pandemic_era] In this project, we will evaluate an info graphic highlighting the top 40 countries in military spending in 2022 (@fig-wsj-on-poster). To enhance the clarity and interpretation of the data, we will refine the visualizations and plots, ensuring they are more intuitive and informative for viewers. This will involve improving the design and presentation of the data to clearly convey the significant trends and figures in global military expenditure.
 
-[^world_population_review]: [1] “Military Spending By Country 2024,” World Population Review, https://worldpopulationreview.com/country-rankings/military-spending-by-country (accessed Jun. 26, 2024).
-[^trends_world_military_expenditure]: [2] “Trends in world military expenditure, 2023,” SIPRI, https://www.sipri.org/publications/2024/sipri-fact-sheets/trends-world-military-expenditure-2023 (accessed Jun. 26, 2024). 
-[^post_pandemic_era]: [3] International Monetary Fund, https://www.imf.org/external/pubs/ft/fandd/2021/06/military-spending-in-the-post-pandemic-era-clements-gupta-khamidova.html (accessed Jun. 26, 2024). 
+[^world_population_review]: “Military Spending By Country 2024,” World Population Review, https://worldpopulationreview.com/country-rankings/military-spending-by-country (accessed Jun. 26, 2024).
+[^trends_world_military_expenditure]: “Trends in world military expenditure, 2023,” SIPRI, https://www.sipri.org/publications/2024/sipri-fact-sheets/trends-world-military-expenditure-2023 (accessed Jun. 26, 2024). 
+[^post_pandemic_era]: International Monetary Fund, https://www.imf.org/external/pubs/ft/fandd/2021/06/military-spending-in-the-post-pandemic-era-clements-gupta-khamidova.html (accessed Jun. 26, 2024). 
 
 # Previous Visualization
 
@@ -49,12 +49,15 @@ A nation's military is an essential asset for enforcing both domestic and foreig
 include_graphics("images/military_spending.jpg")
 ```
 
-[^poster_source]: [4] P. Rao and J. Ma, “Mapped: World’s top 40 largest military budgets,” Visual Capitalist, https://www.visualcapitalist.com/mapped-largest-military-budgets-2022/ (accessed Jun. 26, 2024). 
+[^poster_source]: P. Rao and J. Ma, “Mapped: World’s top 40 largest military budgets,” Visual Capitalist, https://www.visualcapitalist.com/mapped-largest-military-budgets-2022/ (accessed Jun. 26, 2024). 
 
 # Strengths
 
 1.    The bubble chart visually represents the size of military spending across all countries, with larger bubble indicating a higher spending while providing additional spending value together with ranking allows for quick analysis.
+
 2.    Military spending as a share of GDP across all countries is represented using color coding, with lighter colors indicating lower percentage while brighter colors indicating higher percentage highlighting the severity of the country.
+
+3.    The positions of the countries are arranged according to their geographical location, making it easier to identify the countries and their respective military spending.
 
 # Suggested Improvements
 
@@ -74,8 +77,10 @@ include_graphics("images/military_spending.jpg")
 ## Data
 
 1.    Military spending and share of GDP across all countries from 1949 to 2023 that were published by Stockholm International Peace Research Institute (SIPRI).
+
 2.    The data have missing value under military spending and share of GDP throughout the years that were represented by "xxx" and "..." were replaced with "N/A" to drop the data and excluded from the comparison to ensure accuracy and reliability.
-3.    Performed data filtering, cleaning, and reformatting from the years "2022" to "2023" while converting strings to actual values for military spending. Additionally, we have renamed default labels in the dataset from "2023.0" to "2023" to match desired preferences. Ensuring graphs accurately represented the underlying data without any distortions.
+
+
 
 ## Software
 
