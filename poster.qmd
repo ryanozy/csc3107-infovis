@@ -55,6 +55,7 @@ include_graphics("images/military_spending.jpg")
 
 1.    The bubble chart visually represents the size of military spending across all countries, with larger bubble indicating a higher spending while providing additional spending value together with ranking allows for quick analysis.
 2.    Military spending as a share of GDP across all countries is represented using color coding, with lighter colors indicating lower percentage while brighter colors indicating higher percentage highlighting the severity of the country.
+3.    The positions of the countries are arranged according to their geographical location, making it easier to identify the countries and their respective military spending.
 
 # Suggested Improvements
 
