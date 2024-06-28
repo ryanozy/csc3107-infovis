@@ -13,7 +13,7 @@ library(patchwork)
 #| label: load-dataset
 #| message: false
 
-# Loading of current military spending sheet based on current usd exchange rate
+# Loading of current military spending sheet based on current USD exchange rate
 current_us <- read_excel(
   "SIPRI-Milex-data-2018-2023.xlsx", sheet = "Current US$", skip = 5
 )
@@ -30,7 +30,7 @@ share_gdp
 
 
 ## -----------------------------------------------------------------------------
-#| label: data-cleaning
+#| label: data-cleaning-current-us
 
 # Drop rows that the first column is NA
 current_us <- current_us |>
@@ -78,7 +78,7 @@ current_us
 
 
 ## -----------------------------------------------------------------------------
-#| label: share-of-GDP
+#| label: data-cleaning-share-gdp
 
 # Drop rows that the first column is NA
 share_gdp <- share_gdp |>
@@ -120,27 +120,29 @@ share_gdp
 
 
 ## -----------------------------------------------------------------------------
-#| label: after-consultation
-#| fig.width: 10
-#| fig.height: 5
+#| label: data-transformation-plot
 
-# Restructure Data for Bar Chart
+# Pivot Long for Top 10 Military Spending
 top10_long <- current_us |>
   select(Country, `2022`, `2023`) |>
   pivot_longer(cols = `2022`:`2023`, names_to = "Year", values_to = "Spending")
 
-# Share of GDP Bar Chart
+top10_long
+
+# Pivot Long for Share of GDP
 share_gdp_long <- share_gdp |>
   select(Country, `2022`, `2023`) |>
   pivot_longer(cols = `2022`:`2023`, names_to = "Year", values_to = "Share")
 
-# Merge Data
+share_gdp_long
+
+# Merge Data using left_join
 merged_data <- top10_long |>
   left_join(share_gdp_long, by = c("Country", "Year"))
 
-scale_factor <- max(merged_data$Spending) /
-  max(merged_data$Share)
+merged_data
 
+# Ordering of Countries within the bar chart
 merged_data <- merged_data |>
   mutate(
     Country = factor(
@@ -159,27 +161,8 @@ merged_data <- merged_data |>
     )
   )
 
-# Bar plot
-bar_plot <- ggplot(merged_data, aes(x = Country, y = Spending, fill = Year)) +
-  geom_bar(stat = "identity", position = "dodge") +
-  geom_text(aes(label = round(Spending, 1)),
-            position = position_dodge(width = 0.9),
-            vjust = 0.3, hjust = -0.5,
-            size = 3) +
-  # Manually specify colors
-  scale_fill_manual(values = c("2022" = "#3182bd", "2023" = "#de2d26")) +
-  guides(
-    # Reverse legend order
-    fill = guide_legend(reverse = TRUE, title = "Military Spending")
-  ) +
-  labs(
-    x = "Country",
-    y = "Military Spending in US$ (Billions)"
-  ) +
-  ylim(0, 1000) +  # Extend x-axis limits from 0 to 40
-  coord_flip() +
-  theme_minimal() +
-  theme(legend.position = c(.8, .15))
+merged_data
+
 
 
 # Separate the data for each year
@@ -190,74 +173,6 @@ data_2023 <- merged_data |>
   filter(Year == "2023") |>
   arrange(desc(Spending))
 
-# Point plot
-point_plot <- ggplot() +
-  geom_point(
-    data = data_2023,
-    aes(x = reorder(Country, Spending),
-        y = Share, color = Share),
-    shape = 16,
-    position = position_nudge(x = 0.3), size = 3.5
-  ) +
-  scale_color_gradientn(colors = c("#fcbba1", "#a50f15")) +
-  geom_point(
-    data = data_2022,
-    aes(x = Country,
-        y = Share,
-        fill = Share),
-    shape = 24,
-    position = position_nudge(x = -0.3), size = 3.5
-  ) +
-  scale_fill_gradientn(colors = c("#c6dbef", "#08519c")) +
-  geom_text(
-    data = data_2023,
-    aes(x = Country,
-        y = Share,
-        label = round(Share, 2)),
-    position = position_dodge(width = 0.5),
-    vjust = -1,
-    hjust = -0.4,
-    size = 3
-  ) +
-  geom_text(
-    data = data_2022,
-    aes(x = Country,
-        y = Share,
-        label = round(Share, 2)),
-    position = position_dodge(width = 0.5),
-    vjust = 1.5,
-    hjust = -0.6,
-    size = 3
-  ) +
-  coord_flip() +
-  guides(
-    fill = guide_colorbar(title = "Share of GDP 2022", order = 2),
-    color = guide_colorbar(title = "Share of GDP 2023", order = 1)
-  ) +
-  labs(
-    y = "Share of GDP (%)"
-  ) +
-  ylim(0, 45) +  # Extend x-axis limits from 0 to 40
-  theme_minimal() +
-  theme(
-    axis.text.y = element_blank(),  # Remove y-axis text
-    axis.ticks.y = element_blank(), # Remove y-axis ticks
-    axis.title.y = element_blank()  # Remove y-axis title
-  )
-
-# Combine plots with a shared legend at the bottom
-combined_plot <-
-  (bar_plot + point_plot) +
-  plot_annotation(
-    title =
-    "Top 10 Countries by Military Spending and Share of GDP (2022-2023)",
-    caption = "Source: SIPRI Military Expenditure Database",
-    theme = theme(
-      # Center the title
-      plot.title = element_text(hjust = 0.5, face = "bold", size = 14),
-    )
-  )
-
-# Display the combined plot
-combined_plot
+data_2022
+data_2023
 

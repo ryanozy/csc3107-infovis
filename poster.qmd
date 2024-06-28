@@ -98,6 +98,7 @@ We used the Quarto publication framework and the R programming language, along w
 #| fig-width: 15
 #| fig-height: 10
 #| out-width: 100%
+#| warning: false
 
 bar_plot <- 
   ggplot(
