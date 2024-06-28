@@ -122,8 +122,9 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </section>
 <section id="load-dataset" class="level2">
 <h2 class="anchored" data-anchor-id="load-dataset">Load Dataset</h2>
+<p>We will load the dataset into two separate tibbles, each tibble will store the specific for further data cleaning. The skip = 5 ensures that the column headers can in the correct position within the tibble.</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Loading of current military spending sheet based on current usd exchange rate</span></span>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Loading of current military spending sheet based on current USD exchange rate</span></span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>current_us <span class="ot">&lt;-</span> <span class="fu">read_excel</span>(</span>
 <span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="st">"SIPRI-Milex-data-2018-2023.xlsx"</span>, <span class="at">sheet =</span> <span class="st">"Current US$"</span>, <span class="at">skip =</span> <span class="dv">5</span></span>
 <span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>)</span>
@@ -170,8 +171,8 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 </div>
 </div>
 </section>
-<section id="data-cleaning" class="level2">
-<h2 class="anchored" data-anchor-id="data-cleaning">Data Cleaning</h2>
+<section id="data-cleaning-for-military-spending-on-current-us" class="level2">
+<h2 class="anchored" data-anchor-id="data-cleaning-for-military-spending-on-current-us">Data Cleaning for Military Spending on Current US$</h2>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Drop rows that the first column is NA</span></span>
 <span id="cb7-2"><a href="#cb7-2" aria-hidden="true" tabindex="-1"></a>current_us <span class="ot">&lt;-</span> current_us <span class="sc">|&gt;</span></span>
@@ -226,8 +227,9 @@ Caused by warning:
 </div>
 </div>
 </section>
-<section id="data-transformation" class="level2">
-<h2 class="anchored" data-anchor-id="data-transformation">Data Transformation</h2>
+<section id="data-transformation-for-military-spending-on-current-us" class="level2">
+<h2 class="anchored" data-anchor-id="data-transformation-for-military-spending-on-current-us">Data Transformation for Military Spending on Current US$</h2>
+<p>To reduce the size of the data, we will convert the military spending from millions to billions and convert the data to integer. This will make the data more readable and easier to understand.</p>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb11"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb11-1"><a href="#cb11-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Convert Military Spending from Millions to Billions</span></span>
 <span id="cb11-2"><a href="#cb11-2" aria-hidden="true" tabindex="-1"></a>current_us <span class="ot">&lt;-</span> current_us <span class="sc">|&gt;</span></span>
@@ -255,8 +257,8 @@ Caused by warning:
 </div>
 </div>
 </section>
-<section id="share-of-gdp" class="level2">
-<h2 class="anchored" data-anchor-id="share-of-gdp">Share of GDP</h2>
+<section id="data-cleaning-for-share-of-gdp-tibble" class="level2">
+<h2 class="anchored" data-anchor-id="data-cleaning-for-share-of-gdp-tibble">Data Cleaning for Share of GDP Tibble</h2>
 <div class="cell" data-layout-align="center">
 <div class="sourceCode cell-code" id="cb13"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb13-1"><a href="#cb13-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Drop rows that the first column is NA</span></span>
 <span id="cb13-2"><a href="#cb13-2" aria-hidden="true" tabindex="-1"></a>share_gdp <span class="ot">&lt;-</span> share_gdp <span class="sc">|&gt;</span></span>
@@ -318,155 +320,191 @@ Caused by warning:
 10 Saudi Arabia               8.81   7.79   8.79   7.23   6.4    7.09</code></pre>
 </div>
 </div>
+</section>
+</section>
+<section id="data-transformation-for-bar-chart-and-point-plot" class="level1">
+<h1>Data Transformation for Bar Chart and Point Plot</h1>
+<p>To create a bar chart and point plot, we will pivot the data from wide to long format. This will allow us to plot the data in a more readable format. We will also merge the two tibbles into one tibble for plotting using the <code>left_join</code> function.</p>
+<p>For the ordering of the countries step is crucial, reason being that without it, when visualizing the bar and point plot together, the order of the countries will be different. This will cause the data to be misaligned and the visualization will be incorrect (When plotting the point plot, the order is sorted by 2023 spending, however, the order of the bar chart will be based on combined spending in 2022 and 2023). Hence, setting the order of the countries as such will ensure that the data in the bar chart is aligned with the data in the point plot.</p>
 <div class="cell" data-layout-align="center">
-<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Restructure Data for Bar Chart</span></span>
+<div class="sourceCode cell-code" id="cb17"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb17-1"><a href="#cb17-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Pivot Long for Top 10 Military Spending</span></span>
 <span id="cb17-2"><a href="#cb17-2" aria-hidden="true" tabindex="-1"></a>top10_long <span class="ot">&lt;-</span> current_us <span class="sc">|&gt;</span></span>
 <span id="cb17-3"><a href="#cb17-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Country, <span class="st">`</span><span class="at">2022</span><span class="st">`</span>, <span class="st">`</span><span class="at">2023</span><span class="st">`</span>) <span class="sc">|&gt;</span></span>
 <span id="cb17-4"><a href="#cb17-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="st">`</span><span class="at">2022</span><span class="st">`</span><span class="sc">:</span><span class="st">`</span><span class="at">2023</span><span class="st">`</span>, <span class="at">names_to =</span> <span class="st">"Year"</span>, <span class="at">values_to =</span> <span class="st">"Spending"</span>)</span>
 <span id="cb17-5"><a href="#cb17-5" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a><span class="co"># Share of GDP Bar Chart</span></span>
-<span id="cb17-7"><a href="#cb17-7" aria-hidden="true" tabindex="-1"></a>share_gdp_long <span class="ot">&lt;-</span> share_gdp <span class="sc">|&gt;</span></span>
-<span id="cb17-8"><a href="#cb17-8" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Country, <span class="st">`</span><span class="at">2022</span><span class="st">`</span>, <span class="st">`</span><span class="at">2023</span><span class="st">`</span>) <span class="sc">|&gt;</span></span>
-<span id="cb17-9"><a href="#cb17-9" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="st">`</span><span class="at">2022</span><span class="st">`</span><span class="sc">:</span><span class="st">`</span><span class="at">2023</span><span class="st">`</span>, <span class="at">names_to =</span> <span class="st">"Year"</span>, <span class="at">values_to =</span> <span class="st">"Share"</span>)</span>
-<span id="cb17-10"><a href="#cb17-10" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-11"><a href="#cb17-11" aria-hidden="true" tabindex="-1"></a><span class="co"># Merge Data</span></span>
-<span id="cb17-12"><a href="#cb17-12" aria-hidden="true" tabindex="-1"></a>merged_data <span class="ot">&lt;-</span> top10_long <span class="sc">|&gt;</span></span>
-<span id="cb17-13"><a href="#cb17-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(share_gdp_long, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"Country"</span>, <span class="st">"Year"</span>))</span>
-<span id="cb17-14"><a href="#cb17-14" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-15"><a href="#cb17-15" aria-hidden="true" tabindex="-1"></a>scale_factor <span class="ot">&lt;-</span> <span class="fu">max</span>(merged_data<span class="sc">$</span>Spending) <span class="sc">/</span></span>
-<span id="cb17-16"><a href="#cb17-16" aria-hidden="true" tabindex="-1"></a>  <span class="fu">max</span>(merged_data<span class="sc">$</span>Share)</span>
-<span id="cb17-17"><a href="#cb17-17" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-18"><a href="#cb17-18" aria-hidden="true" tabindex="-1"></a>merged_data <span class="ot">&lt;-</span> merged_data <span class="sc">|&gt;</span></span>
-<span id="cb17-19"><a href="#cb17-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
-<span id="cb17-20"><a href="#cb17-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">Country =</span> <span class="fu">factor</span>(</span>
-<span id="cb17-21"><a href="#cb17-21" aria-hidden="true" tabindex="-1"></a>      Country, <span class="at">levels =</span> <span class="fu">c</span>(</span>
-<span id="cb17-22"><a href="#cb17-22" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Japan"</span>,</span>
-<span id="cb17-23"><a href="#cb17-23" aria-hidden="true" tabindex="-1"></a>        <span class="st">"France"</span>,</span>
-<span id="cb17-24"><a href="#cb17-24" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Ukraine"</span>,</span>
-<span id="cb17-25"><a href="#cb17-25" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Germany"</span>,</span>
-<span id="cb17-26"><a href="#cb17-26" aria-hidden="true" tabindex="-1"></a>        <span class="st">"United Kingdom"</span>,</span>
-<span id="cb17-27"><a href="#cb17-27" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Saudi Arabia"</span>,</span>
-<span id="cb17-28"><a href="#cb17-28" aria-hidden="true" tabindex="-1"></a>        <span class="st">"India"</span>,</span>
-<span id="cb17-29"><a href="#cb17-29" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Russia"</span>,</span>
-<span id="cb17-30"><a href="#cb17-30" aria-hidden="true" tabindex="-1"></a>        <span class="st">"China"</span>,</span>
-<span id="cb17-31"><a href="#cb17-31" aria-hidden="true" tabindex="-1"></a>        <span class="st">"United States of America"</span></span>
-<span id="cb17-32"><a href="#cb17-32" aria-hidden="true" tabindex="-1"></a>      )</span>
-<span id="cb17-33"><a href="#cb17-33" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb17-34"><a href="#cb17-34" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb17-35"><a href="#cb17-35" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb17-36"><a href="#cb17-36" aria-hidden="true" tabindex="-1"></a><span class="co"># Bar plot</span></span>
-<span id="cb17-37"><a href="#cb17-37" aria-hidden="true" tabindex="-1"></a>bar_plot <span class="ot">&lt;-</span> <span class="fu">ggplot</span>(merged_data, <span class="fu">aes</span>(<span class="at">x =</span> Country, <span class="at">y =</span> Spending, <span class="at">fill =</span> Year)) <span class="sc">+</span></span>
-<span id="cb17-38"><a href="#cb17-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_bar</span>(<span class="at">stat =</span> <span class="st">"identity"</span>, <span class="at">position =</span> <span class="st">"dodge"</span>) <span class="sc">+</span></span>
-<span id="cb17-39"><a href="#cb17-39" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(<span class="fu">aes</span>(<span class="at">label =</span> <span class="fu">round</span>(Spending, <span class="dv">1</span>)),</span>
-<span id="cb17-40"><a href="#cb17-40" aria-hidden="true" tabindex="-1"></a>            <span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="at">width =</span> <span class="fl">0.9</span>),</span>
-<span id="cb17-41"><a href="#cb17-41" aria-hidden="true" tabindex="-1"></a>            <span class="at">vjust =</span> <span class="fl">0.3</span>, <span class="at">hjust =</span> <span class="sc">-</span><span class="fl">0.5</span>,</span>
-<span id="cb17-42"><a href="#cb17-42" aria-hidden="true" tabindex="-1"></a>            <span class="at">size =</span> <span class="dv">3</span>) <span class="sc">+</span></span>
-<span id="cb17-43"><a href="#cb17-43" aria-hidden="true" tabindex="-1"></a>  <span class="co"># Manually specify colors</span></span>
-<span id="cb17-44"><a href="#cb17-44" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"2022"</span> <span class="ot">=</span> <span class="st">"#3182bd"</span>, <span class="st">"2023"</span> <span class="ot">=</span> <span class="st">"#de2d26"</span>)) <span class="sc">+</span></span>
-<span id="cb17-45"><a href="#cb17-45" aria-hidden="true" tabindex="-1"></a>  <span class="fu">guides</span>(</span>
-<span id="cb17-46"><a href="#cb17-46" aria-hidden="true" tabindex="-1"></a>    <span class="co"># Reverse legend order</span></span>
-<span id="cb17-47"><a href="#cb17-47" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill =</span> <span class="fu">guide_legend</span>(<span class="at">reverse =</span> <span class="cn">TRUE</span>, <span class="at">title =</span> <span class="st">"Military Spending"</span>)</span>
-<span id="cb17-48"><a href="#cb17-48" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb17-49"><a href="#cb17-49" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb17-50"><a href="#cb17-50" aria-hidden="true" tabindex="-1"></a>    <span class="at">x =</span> <span class="st">"Country"</span>,</span>
-<span id="cb17-51"><a href="#cb17-51" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Military Spending in US$ (Billions)"</span></span>
-<span id="cb17-52"><a href="#cb17-52" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb17-53"><a href="#cb17-53" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="dv">0</span>, <span class="dv">1000</span>) <span class="sc">+</span>  <span class="co"># Extend x-axis limits from 0 to 40</span></span>
-<span id="cb17-54"><a href="#cb17-54" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
-<span id="cb17-55"><a href="#cb17-55" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
-<span id="cb17-56"><a href="#cb17-56" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">legend.position =</span> <span class="fu">c</span>(.<span class="dv">8</span>, .<span class="dv">15</span>))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output cell-output-stderr">
-<pre><code>Warning: A numeric `legend.position` argument in `theme()` was deprecated in ggplot2
-3.5.0.
-ℹ Please use the `legend.position.inside` argument of `theme()` instead.</code></pre>
+<span id="cb17-6"><a href="#cb17-6" aria-hidden="true" tabindex="-1"></a>top10_long</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 20 × 3
+   Country                  Year  Spending
+   &lt;chr&gt;                    &lt;chr&gt;    &lt;int&gt;
+ 1 United States of America 2022       860
+ 2 United States of America 2023       916
+ 3 China                    2022       291
+ 4 China                    2023       296
+ 5 Russia                   2022       102
+ 6 Russia                   2023       109
+ 7 India                    2022        79
+ 8 India                    2023        83
+ 9 Saudi Arabia             2022        70
+10 Saudi Arabia             2023        75
+11 United Kingdom           2022        64
+12 United Kingdom           2023        74
+13 Germany                  2022        56
+14 Germany                  2023        66
+15 Ukraine                  2022        41
+16 Ukraine                  2023        64
+17 France                   2022        53
+18 France                   2023        61
+19 Japan                    2022        46
+20 Japan                    2023        50</code></pre>
 </div>
-<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Separate the data for each year</span></span>
-<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>data_2022 <span class="ot">&lt;-</span> merged_data <span class="sc">|&gt;</span></span>
-<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Year <span class="sc">==</span> <span class="st">"2022"</span>)</span>
-<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a>data_2023 <span class="ot">&lt;-</span> merged_data <span class="sc">|&gt;</span></span>
-<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Year <span class="sc">==</span> <span class="st">"2023"</span>) <span class="sc">|&gt;</span></span>
-<span id="cb19-7"><a href="#cb19-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(Spending))</span>
-<span id="cb19-8"><a href="#cb19-8" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-9"><a href="#cb19-9" aria-hidden="true" tabindex="-1"></a><span class="co"># Point plot</span></span>
-<span id="cb19-10"><a href="#cb19-10" aria-hidden="true" tabindex="-1"></a>point_plot <span class="ot">&lt;-</span> <span class="fu">ggplot</span>() <span class="sc">+</span></span>
-<span id="cb19-11"><a href="#cb19-11" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(</span>
-<span id="cb19-12"><a href="#cb19-12" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> data_2023,</span>
-<span id="cb19-13"><a href="#cb19-13" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">x =</span> <span class="fu">reorder</span>(Country, Spending),</span>
-<span id="cb19-14"><a href="#cb19-14" aria-hidden="true" tabindex="-1"></a>        <span class="at">y =</span> Share, <span class="at">color =</span> Share),</span>
-<span id="cb19-15"><a href="#cb19-15" aria-hidden="true" tabindex="-1"></a>    <span class="at">shape =</span> <span class="dv">16</span>,</span>
-<span id="cb19-16"><a href="#cb19-16" aria-hidden="true" tabindex="-1"></a>    <span class="at">position =</span> <span class="fu">position_nudge</span>(<span class="at">x =</span> <span class="fl">0.3</span>), <span class="at">size =</span> <span class="fl">3.5</span></span>
-<span id="cb19-17"><a href="#cb19-17" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb19-18"><a href="#cb19-18" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_gradientn</span>(<span class="at">colors =</span> <span class="fu">c</span>(<span class="st">"#fcbba1"</span>, <span class="st">"#a50f15"</span>)) <span class="sc">+</span></span>
-<span id="cb19-19"><a href="#cb19-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(</span>
-<span id="cb19-20"><a href="#cb19-20" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> data_2022,</span>
-<span id="cb19-21"><a href="#cb19-21" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">x =</span> Country,</span>
-<span id="cb19-22"><a href="#cb19-22" aria-hidden="true" tabindex="-1"></a>        <span class="at">y =</span> Share,</span>
-<span id="cb19-23"><a href="#cb19-23" aria-hidden="true" tabindex="-1"></a>        <span class="at">fill =</span> Share),</span>
-<span id="cb19-24"><a href="#cb19-24" aria-hidden="true" tabindex="-1"></a>    <span class="at">shape =</span> <span class="dv">24</span>,</span>
-<span id="cb19-25"><a href="#cb19-25" aria-hidden="true" tabindex="-1"></a>    <span class="at">position =</span> <span class="fu">position_nudge</span>(<span class="at">x =</span> <span class="sc">-</span><span class="fl">0.3</span>), <span class="at">size =</span> <span class="fl">3.5</span></span>
-<span id="cb19-26"><a href="#cb19-26" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb19-27"><a href="#cb19-27" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_fill_gradientn</span>(<span class="at">colors =</span> <span class="fu">c</span>(<span class="st">"#c6dbef"</span>, <span class="st">"#08519c"</span>)) <span class="sc">+</span></span>
-<span id="cb19-28"><a href="#cb19-28" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(</span>
-<span id="cb19-29"><a href="#cb19-29" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> data_2023,</span>
-<span id="cb19-30"><a href="#cb19-30" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">x =</span> Country,</span>
-<span id="cb19-31"><a href="#cb19-31" aria-hidden="true" tabindex="-1"></a>        <span class="at">y =</span> Share,</span>
-<span id="cb19-32"><a href="#cb19-32" aria-hidden="true" tabindex="-1"></a>        <span class="at">label =</span> <span class="fu">round</span>(Share, <span class="dv">2</span>)),</span>
-<span id="cb19-33"><a href="#cb19-33" aria-hidden="true" tabindex="-1"></a>    <span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="at">width =</span> <span class="fl">0.5</span>),</span>
-<span id="cb19-34"><a href="#cb19-34" aria-hidden="true" tabindex="-1"></a>    <span class="at">vjust =</span> <span class="sc">-</span><span class="dv">1</span>,</span>
-<span id="cb19-35"><a href="#cb19-35" aria-hidden="true" tabindex="-1"></a>    <span class="at">hjust =</span> <span class="sc">-</span><span class="fl">0.4</span>,</span>
-<span id="cb19-36"><a href="#cb19-36" aria-hidden="true" tabindex="-1"></a>    <span class="at">size =</span> <span class="dv">3</span></span>
-<span id="cb19-37"><a href="#cb19-37" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb19-38"><a href="#cb19-38" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_text</span>(</span>
-<span id="cb19-39"><a href="#cb19-39" aria-hidden="true" tabindex="-1"></a>    <span class="at">data =</span> data_2022,</span>
-<span id="cb19-40"><a href="#cb19-40" aria-hidden="true" tabindex="-1"></a>    <span class="fu">aes</span>(<span class="at">x =</span> Country,</span>
-<span id="cb19-41"><a href="#cb19-41" aria-hidden="true" tabindex="-1"></a>        <span class="at">y =</span> Share,</span>
-<span id="cb19-42"><a href="#cb19-42" aria-hidden="true" tabindex="-1"></a>        <span class="at">label =</span> <span class="fu">round</span>(Share, <span class="dv">2</span>)),</span>
-<span id="cb19-43"><a href="#cb19-43" aria-hidden="true" tabindex="-1"></a>    <span class="at">position =</span> <span class="fu">position_dodge</span>(<span class="at">width =</span> <span class="fl">0.5</span>),</span>
-<span id="cb19-44"><a href="#cb19-44" aria-hidden="true" tabindex="-1"></a>    <span class="at">vjust =</span> <span class="fl">1.5</span>,</span>
-<span id="cb19-45"><a href="#cb19-45" aria-hidden="true" tabindex="-1"></a>    <span class="at">hjust =</span> <span class="sc">-</span><span class="fl">0.6</span>,</span>
-<span id="cb19-46"><a href="#cb19-46" aria-hidden="true" tabindex="-1"></a>    <span class="at">size =</span> <span class="dv">3</span></span>
-<span id="cb19-47"><a href="#cb19-47" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb19-48"><a href="#cb19-48" aria-hidden="true" tabindex="-1"></a>  <span class="fu">coord_flip</span>() <span class="sc">+</span></span>
-<span id="cb19-49"><a href="#cb19-49" aria-hidden="true" tabindex="-1"></a>  <span class="fu">guides</span>(</span>
-<span id="cb19-50"><a href="#cb19-50" aria-hidden="true" tabindex="-1"></a>    <span class="at">fill =</span> <span class="fu">guide_colorbar</span>(<span class="at">title =</span> <span class="st">"Share of GDP 2022"</span>, <span class="at">order =</span> <span class="dv">2</span>),</span>
-<span id="cb19-51"><a href="#cb19-51" aria-hidden="true" tabindex="-1"></a>    <span class="at">color =</span> <span class="fu">guide_colorbar</span>(<span class="at">title =</span> <span class="st">"Share of GDP 2023"</span>, <span class="at">order =</span> <span class="dv">1</span>)</span>
-<span id="cb19-52"><a href="#cb19-52" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb19-53"><a href="#cb19-53" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(</span>
-<span id="cb19-54"><a href="#cb19-54" aria-hidden="true" tabindex="-1"></a>    <span class="at">y =</span> <span class="st">"Share of GDP (%)"</span></span>
-<span id="cb19-55"><a href="#cb19-55" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">+</span></span>
-<span id="cb19-56"><a href="#cb19-56" aria-hidden="true" tabindex="-1"></a>  <span class="fu">ylim</span>(<span class="dv">0</span>, <span class="dv">45</span>) <span class="sc">+</span>  <span class="co"># Extend x-axis limits from 0 to 40</span></span>
-<span id="cb19-57"><a href="#cb19-57" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme_minimal</span>() <span class="sc">+</span></span>
-<span id="cb19-58"><a href="#cb19-58" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(</span>
-<span id="cb19-59"><a href="#cb19-59" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.text.y =</span> <span class="fu">element_blank</span>(),  <span class="co"># Remove y-axis text</span></span>
-<span id="cb19-60"><a href="#cb19-60" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.ticks.y =</span> <span class="fu">element_blank</span>(), <span class="co"># Remove y-axis ticks</span></span>
-<span id="cb19-61"><a href="#cb19-61" aria-hidden="true" tabindex="-1"></a>    <span class="at">axis.title.y =</span> <span class="fu">element_blank</span>()  <span class="co"># Remove y-axis title</span></span>
-<span id="cb19-62"><a href="#cb19-62" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb19-63"><a href="#cb19-63" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-64"><a href="#cb19-64" aria-hidden="true" tabindex="-1"></a><span class="co"># Combine plots with a shared legend at the bottom</span></span>
-<span id="cb19-65"><a href="#cb19-65" aria-hidden="true" tabindex="-1"></a>combined_plot <span class="ot">&lt;-</span></span>
-<span id="cb19-66"><a href="#cb19-66" aria-hidden="true" tabindex="-1"></a>  (bar_plot <span class="sc">+</span> point_plot) <span class="sc">+</span></span>
-<span id="cb19-67"><a href="#cb19-67" aria-hidden="true" tabindex="-1"></a>  <span class="fu">plot_annotation</span>(</span>
-<span id="cb19-68"><a href="#cb19-68" aria-hidden="true" tabindex="-1"></a>    <span class="at">title =</span></span>
-<span id="cb19-69"><a href="#cb19-69" aria-hidden="true" tabindex="-1"></a>    <span class="st">"Top 10 Countries by Military Spending and Share of GDP (2022-2023)"</span>,</span>
-<span id="cb19-70"><a href="#cb19-70" aria-hidden="true" tabindex="-1"></a>    <span class="at">caption =</span> <span class="st">"Source: SIPRI Military Expenditure Database"</span>,</span>
-<span id="cb19-71"><a href="#cb19-71" aria-hidden="true" tabindex="-1"></a>    <span class="at">theme =</span> <span class="fu">theme</span>(</span>
-<span id="cb19-72"><a href="#cb19-72" aria-hidden="true" tabindex="-1"></a>      <span class="co"># Center the title</span></span>
-<span id="cb19-73"><a href="#cb19-73" aria-hidden="true" tabindex="-1"></a>      <span class="at">plot.title =</span> <span class="fu">element_text</span>(<span class="at">hjust =</span> <span class="fl">0.5</span>, <span class="at">face =</span> <span class="st">"bold"</span>, <span class="at">size =</span> <span class="dv">14</span>),</span>
-<span id="cb19-74"><a href="#cb19-74" aria-hidden="true" tabindex="-1"></a>    )</span>
-<span id="cb19-75"><a href="#cb19-75" aria-hidden="true" tabindex="-1"></a>  )</span>
-<span id="cb19-76"><a href="#cb19-76" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb19-77"><a href="#cb19-77" aria-hidden="true" tabindex="-1"></a><span class="co"># Display the combined plot</span></span>
-<span id="cb19-78"><a href="#cb19-78" aria-hidden="true" tabindex="-1"></a>combined_plot</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
-<div class="cell-output-display">
-<div class="quarto-figure quarto-figure-center">
-<figure class="figure">
-<p><img src="pre-processing_files/figure-html/after-consultation-1.png" class="img-fluid quarto-figure quarto-figure-center figure-img" width="960"></p>
-</figure>
+<div class="sourceCode cell-code" id="cb19"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb19-1"><a href="#cb19-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Pivot Long for Share of GDP</span></span>
+<span id="cb19-2"><a href="#cb19-2" aria-hidden="true" tabindex="-1"></a>share_gdp_long <span class="ot">&lt;-</span> share_gdp <span class="sc">|&gt;</span></span>
+<span id="cb19-3"><a href="#cb19-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(Country, <span class="st">`</span><span class="at">2022</span><span class="st">`</span>, <span class="st">`</span><span class="at">2023</span><span class="st">`</span>) <span class="sc">|&gt;</span></span>
+<span id="cb19-4"><a href="#cb19-4" aria-hidden="true" tabindex="-1"></a>  <span class="fu">pivot_longer</span>(<span class="at">cols =</span> <span class="st">`</span><span class="at">2022</span><span class="st">`</span><span class="sc">:</span><span class="st">`</span><span class="at">2023</span><span class="st">`</span>, <span class="at">names_to =</span> <span class="st">"Year"</span>, <span class="at">values_to =</span> <span class="st">"Share"</span>)</span>
+<span id="cb19-5"><a href="#cb19-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb19-6"><a href="#cb19-6" aria-hidden="true" tabindex="-1"></a>share_gdp_long</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 20 × 3
+   Country                  Year  Share
+   &lt;chr&gt;                    &lt;chr&gt; &lt;dbl&gt;
+ 1 United States of America 2022   3.34
+ 2 United States of America 2023   3.36
+ 3 India                    2022   2.36
+ 4 India                    2023   2.44
+ 5 China                    2022   1.62
+ 6 China                    2023   1.67
+ 7 Japan                    2022   1.11
+ 8 Japan                    2023   1.2 
+ 9 Russia                   2022   4.69
+10 Russia                   2023   5.86
+11 Ukraine                  2022  25.9 
+12 Ukraine                  2023  36.6 
+13 France                   2022   1.93
+14 France                   2023   2.06
+15 Germany                  2022   1.38
+16 Germany                  2023   1.52
+17 United Kingdom           2022   2.07
+18 United Kingdom           2023   2.26
+19 Saudi Arabia             2022   6.4 
+20 Saudi Arabia             2023   7.09</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb21"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb21-1"><a href="#cb21-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Merge Data using left_join</span></span>
+<span id="cb21-2"><a href="#cb21-2" aria-hidden="true" tabindex="-1"></a>merged_data <span class="ot">&lt;-</span> top10_long <span class="sc">|&gt;</span></span>
+<span id="cb21-3"><a href="#cb21-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">left_join</span>(share_gdp_long, <span class="at">by =</span> <span class="fu">c</span>(<span class="st">"Country"</span>, <span class="st">"Year"</span>))</span>
+<span id="cb21-4"><a href="#cb21-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb21-5"><a href="#cb21-5" aria-hidden="true" tabindex="-1"></a>merged_data</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 20 × 4
+   Country                  Year  Spending Share
+   &lt;chr&gt;                    &lt;chr&gt;    &lt;int&gt; &lt;dbl&gt;
+ 1 United States of America 2022       860  3.34
+ 2 United States of America 2023       916  3.36
+ 3 China                    2022       291  1.62
+ 4 China                    2023       296  1.67
+ 5 Russia                   2022       102  4.69
+ 6 Russia                   2023       109  5.86
+ 7 India                    2022        79  2.36
+ 8 India                    2023        83  2.44
+ 9 Saudi Arabia             2022        70  6.4 
+10 Saudi Arabia             2023        75  7.09
+11 United Kingdom           2022        64  2.07
+12 United Kingdom           2023        74  2.26
+13 Germany                  2022        56  1.38
+14 Germany                  2023        66  1.52
+15 Ukraine                  2022        41 25.9 
+16 Ukraine                  2023        64 36.6 
+17 France                   2022        53  1.93
+18 France                   2023        61  2.06
+19 Japan                    2022        46  1.11
+20 Japan                    2023        50  1.2 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb23"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb23-1"><a href="#cb23-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Ordering of Countries within the bar chart</span></span>
+<span id="cb23-2"><a href="#cb23-2" aria-hidden="true" tabindex="-1"></a>merged_data <span class="ot">&lt;-</span> merged_data <span class="sc">|&gt;</span></span>
+<span id="cb23-3"><a href="#cb23-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(</span>
+<span id="cb23-4"><a href="#cb23-4" aria-hidden="true" tabindex="-1"></a>    <span class="at">Country =</span> <span class="fu">factor</span>(</span>
+<span id="cb23-5"><a href="#cb23-5" aria-hidden="true" tabindex="-1"></a>      Country, <span class="at">levels =</span> <span class="fu">c</span>(</span>
+<span id="cb23-6"><a href="#cb23-6" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Japan"</span>,</span>
+<span id="cb23-7"><a href="#cb23-7" aria-hidden="true" tabindex="-1"></a>        <span class="st">"France"</span>,</span>
+<span id="cb23-8"><a href="#cb23-8" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Ukraine"</span>,</span>
+<span id="cb23-9"><a href="#cb23-9" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Germany"</span>,</span>
+<span id="cb23-10"><a href="#cb23-10" aria-hidden="true" tabindex="-1"></a>        <span class="st">"United Kingdom"</span>,</span>
+<span id="cb23-11"><a href="#cb23-11" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Saudi Arabia"</span>,</span>
+<span id="cb23-12"><a href="#cb23-12" aria-hidden="true" tabindex="-1"></a>        <span class="st">"India"</span>,</span>
+<span id="cb23-13"><a href="#cb23-13" aria-hidden="true" tabindex="-1"></a>        <span class="st">"Russia"</span>,</span>
+<span id="cb23-14"><a href="#cb23-14" aria-hidden="true" tabindex="-1"></a>        <span class="st">"China"</span>,</span>
+<span id="cb23-15"><a href="#cb23-15" aria-hidden="true" tabindex="-1"></a>        <span class="st">"United States of America"</span></span>
+<span id="cb23-16"><a href="#cb23-16" aria-hidden="true" tabindex="-1"></a>      )</span>
+<span id="cb23-17"><a href="#cb23-17" aria-hidden="true" tabindex="-1"></a>    )</span>
+<span id="cb23-18"><a href="#cb23-18" aria-hidden="true" tabindex="-1"></a>  )</span>
+<span id="cb23-19"><a href="#cb23-19" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb23-20"><a href="#cb23-20" aria-hidden="true" tabindex="-1"></a>merged_data</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 20 × 4
+   Country                  Year  Spending Share
+   &lt;fct&gt;                    &lt;chr&gt;    &lt;int&gt; &lt;dbl&gt;
+ 1 United States of America 2022       860  3.34
+ 2 United States of America 2023       916  3.36
+ 3 China                    2022       291  1.62
+ 4 China                    2023       296  1.67
+ 5 Russia                   2022       102  4.69
+ 6 Russia                   2023       109  5.86
+ 7 India                    2022        79  2.36
+ 8 India                    2023        83  2.44
+ 9 Saudi Arabia             2022        70  6.4 
+10 Saudi Arabia             2023        75  7.09
+11 United Kingdom           2022        64  2.07
+12 United Kingdom           2023        74  2.26
+13 Germany                  2022        56  1.38
+14 Germany                  2023        66  1.52
+15 Ukraine                  2022        41 25.9 
+16 Ukraine                  2023        64 36.6 
+17 France                   2022        53  1.93
+18 France                   2023        61  2.06
+19 Japan                    2022        46  1.11
+20 Japan                    2023        50  1.2 </code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb25"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb25-1"><a href="#cb25-1" aria-hidden="true" tabindex="-1"></a><span class="co"># Separate the data for each year</span></span>
+<span id="cb25-2"><a href="#cb25-2" aria-hidden="true" tabindex="-1"></a>data_2022 <span class="ot">&lt;-</span> merged_data <span class="sc">|&gt;</span></span>
+<span id="cb25-3"><a href="#cb25-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Year <span class="sc">==</span> <span class="st">"2022"</span>)</span>
+<span id="cb25-4"><a href="#cb25-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-5"><a href="#cb25-5" aria-hidden="true" tabindex="-1"></a>data_2023 <span class="ot">&lt;-</span> merged_data <span class="sc">|&gt;</span></span>
+<span id="cb25-6"><a href="#cb25-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">filter</span>(Year <span class="sc">==</span> <span class="st">"2023"</span>) <span class="sc">|&gt;</span></span>
+<span id="cb25-7"><a href="#cb25-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">arrange</span>(<span class="fu">desc</span>(Spending))</span>
+<span id="cb25-8"><a href="#cb25-8" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb25-9"><a href="#cb25-9" aria-hidden="true" tabindex="-1"></a>data_2022</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 10 × 4
+   Country                  Year  Spending Share
+   &lt;fct&gt;                    &lt;chr&gt;    &lt;int&gt; &lt;dbl&gt;
+ 1 United States of America 2022       860  3.34
+ 2 China                    2022       291  1.62
+ 3 Russia                   2022       102  4.69
+ 4 India                    2022        79  2.36
+ 5 Saudi Arabia             2022        70  6.4 
+ 6 United Kingdom           2022        64  2.07
+ 7 Germany                  2022        56  1.38
+ 8 Ukraine                  2022        41 25.9 
+ 9 France                   2022        53  1.93
+10 Japan                    2022        46  1.11</code></pre>
+</div>
+<div class="sourceCode cell-code" id="cb27"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb27-1"><a href="#cb27-1" aria-hidden="true" tabindex="-1"></a>data_2023</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code># A tibble: 10 × 4
+   Country                  Year  Spending Share
+   &lt;fct&gt;                    &lt;chr&gt;    &lt;int&gt; &lt;dbl&gt;
+ 1 United States of America 2023       916  3.36
+ 2 China                    2023       296  1.67
+ 3 Russia                   2023       109  5.86
+ 4 India                    2023        83  2.44
+ 5 Saudi Arabia             2023        75  7.09
+ 6 United Kingdom           2023        74  2.26
+ 7 Germany                  2023        66  1.52
+ 8 Ukraine                  2023        64 36.6 
+ 9 France                   2023        61  2.06
+10 Japan                    2023        50  1.2 </code></pre>
 </div>
 </div>
-</div>
-</section>
 </section>
 
 </main>
