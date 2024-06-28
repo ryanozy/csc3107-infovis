@@ -245,7 +245,8 @@ combined_plot
 
 # Further Suggestions for Interactivity
 
-Our visualization can be further improved by implementing interactive features using the `infotip` library to provide necessary information instead of statically displaying value for every point which will further reduces cluttering. If the data is visualized in an HTML document, interactive features can be achieved using R packages like `plotly`. In that scenario, we suggest to remove the military spending and share of GDP value of every countries from the static display and replaced with a pop-ups that provides valuable information and when hovering over any individual bar or scatter point. This would also highlight the activated bar or scatter point by thickening the border.
+1.    Our visualization can be further improved by implementing interactive features using the `infotip` library to provide necessary information instead of statically displaying value for every point which will further reduces cluttering.
+2.    If the data is visualized in an HTML document, interactive features can be achieved using R packages like `plotly`. In that scenario, we suggest to remove the military spending and share of GDP value of every countries from the static display and replaced with a pop-ups that provides valuable information and when hovering over any individual bar or scatter point. This would also highlight the activated bar or scatter point by thickening the border.
 
 # Conclusion
 
