@@ -65,7 +65,7 @@ include_graphics("images/military_spending.jpg")
 
 3.    Current chart is too cluttered and messy as higher ranking countries taking more spaces as compared to lower ranking countries causing inconsistent formatting for "Country Names" and "Individual Military Spending".
 
-4.    It can be visually difficult to determine the rank of all countries as they were plotted according to their greopraphical position, requiring viewers to know the position of countries on the world map. Therefore, we plotted a top 10 horizontal descending bar chart for instantaneous analysis and understanding.
+4.    It can be visually difficult to determine the rank of all countries as they were plotted according to their geographical position, requiring viewers to know the position of countries on the world map. Therefore, we plotted a top 10 horizontal descending bar chart for instantaneous analysis and understanding.
 
 5.    Bubble chart might be useful for larger military spending differences but not minor, as it is hard to do size comparison through human eyes, so we implemented clustered bar chart for easily side by side comparison between "2022" and "2023" across the countries.
     
@@ -100,7 +100,7 @@ We used the Quarto publication framework and the R programming language, along w
 #| out-width: 100%
 #| warning: false
 
-bar_plot <- 
+bar_plot <-
   ggplot(
     merged_data,
     aes(x = Country, y = Spending, fill = Year)
@@ -233,7 +233,7 @@ combined_plot <-
   (bar_plot + point_plot) +
   plot_annotation(
     title =
-    "Top 10 Countries by Military Spending and Share of GDP (2022-2023)",
+      "Top 10 Countries by Military Spending and Share of GDP (2022-2023)",
     caption = "Source: SIPRI Military Expenditure Database",
     theme = theme(
       # Center the title
