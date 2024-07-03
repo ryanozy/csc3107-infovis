@@ -3,7 +3,7 @@ title: Visualising Military Spending (2022-2023)
 format:
   poster-typst: 
     size: "33x23" # Approximately A1
-    poster-authors: "Jeffrey Yap Wan Lin, Liew Jun Wei, Poon Xiang Yuan, Ryan Ong Zhi Yong, Wong Yuxuan, Zaw Wana"
+    poster-authors: "Team Orchid: Jeffrey Yap Wan Lin, Liew Jun Wei, Poon Xiang Yuan, Ryan Ong Zhi Yong, Wong Yuxuan, Zaw Wana"
     departments: "Computing Science"
     institution-logo: "./images/sit-logo.png"
     footer-text: "CSC3107 - INFORMATION VISUALISATION 2024"
@@ -94,7 +94,7 @@ We used the Quarto publication framework and the R programming language, along w
 
 ```{r}
 #| label: fig-ggplot
-#| fig-cap: "Top 10 Countries by Military Spending and Spending Against GDP (2022-2023)"
+#| fig-cap: "Top 10 Countries by Military Spending and against GDP (2022-2023)"
 #| fig-width: 15
 #| fig-height: 10
 #| out-width: 100%
@@ -136,15 +136,6 @@ bar_plot <-
     axis.title = element_text(size = 20),
     axis.text = element_text(size = 20),
   )
-
-
-# Separate the data for each year
-data_2022 <- merged_data |>
-  filter(Year == "2022")
-
-data_2023 <- merged_data |>
-  filter(Year == "2023") |>
-  arrange(desc(Spending))
 
 point_plot <- ggplot() +
   geom_point(
@@ -233,7 +224,7 @@ combined_plot <-
   (bar_plot + point_plot) +
   plot_annotation(
     title =
-      "Top 10 Countries by Military Spending and Share of GDP (2022-2023)",
+    "Top 10 Countries by Military Spending and Share of GDP (2022-2023)",
     caption = "Source: SIPRI Military Expenditure Database",
     theme = theme(
       # Center the title

@@ -15,12 +15,14 @@ library(patchwork)
 
 # Loading of current military spending sheet based on current USD exchange rate
 current_us <- read_excel(
-  "SIPRI-Milex-data-2018-2023.xlsx", sheet = "Current US$", skip = 5
+  "SIPRI-Milex-data-2018-2023.xlsx",
+  sheet = "Current US$", skip = 5
 )
 
 # Loading of percentage of spending based on GDP
 share_gdp <- read_excel(
-  "SIPRI-Milex-data-2018-2023.xlsx", sheet = "Share of GDP", skip = 5
+  "SIPRI-Milex-data-2018-2023.xlsx",
+  sheet = "Share of GDP", skip = 5
 )
 
 
@@ -42,7 +44,7 @@ current_us <- current_us |>
 
 # Change column names from '2018.0' to '2018'
 current_us <- current_us |>
-  rename_with(~sub("\\.0$", "", .))
+  rename_with(~ sub("\\.0$", "", .))
 
 # Drop rows that the second column is NA
 current_us <- current_us |>
@@ -50,7 +52,7 @@ current_us <- current_us |>
 
 # Mutate '...' values to empty
 current_us <- current_us |>
-  mutate(across(everything(), ~replace(., . == "...", NA)))
+  mutate(across(everything(), ~ replace(., . == "...", NA)))
 
 # Convert all columns to numeric
 current_us <- current_us |>
@@ -68,7 +70,7 @@ current_us
 
 # Convert Military Spending from Millions to Billions
 current_us <- current_us |>
-  mutate(across(-Country, ~. / 1000))
+  mutate(across(-Country, ~ . / 1000))
 
 # Convert Data to Integer
 current_us <- current_us |>
@@ -90,7 +92,7 @@ share_gdp <- share_gdp |>
 
 # Change column names from '2018.0' to '2018'
 share_gdp <- share_gdp |>
-  rename_with(~sub("\\.0$", "", .))
+  rename_with(~ sub("\\.0$", "", .))
 
 # Drop rows that the second column is NA
 share_gdp <- share_gdp |>
@@ -98,7 +100,7 @@ share_gdp <- share_gdp |>
 
 # Mutate '...' values to empty
 share_gdp <- share_gdp |>
-  mutate(across(everything(), ~replace(., . == "...", NA)))
+  mutate(across(everything(), ~ replace(., . == "...", NA)))
 
 # Convert all columns to numeric
 share_gdp <- share_gdp |>
@@ -110,11 +112,11 @@ share_gdp <- share_gdp |>
 
 # Convert to percentage
 share_gdp <- share_gdp |>
-  mutate(across(-Country, ~. * 100))
+  mutate(across(-Country, ~ . * 100))
 
 # Change to 2 decimal point
 share_gdp <- share_gdp |>
-  mutate(across(-Country, ~round(., 2)))
+  mutate(across(-Country, ~ round(., 2)))
 
 share_gdp
 
@@ -146,7 +148,8 @@ merged_data
 merged_data <- merged_data |>
   mutate(
     Country = factor(
-      Country, levels = c(
+      Country,
+      levels = c(
         "Japan",
         "France",
         "Ukraine",
